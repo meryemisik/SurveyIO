@@ -1,0 +1,14 @@
+{
+    "name": "mat-vote-server",
+    "version": "0.1.0",
+    "private": true,
+    "main": "server.js",
+    "scripts": {
+        "start": "nodemon  server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2",
+        "nodemon": "^2.0.20",
+        "socket-io-server": "^1.0.5"
+    }
+}
