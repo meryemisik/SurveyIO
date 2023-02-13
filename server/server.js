@@ -3,14 +3,12 @@ var http = require('http').Server(app)
 var	io = require('socket.io')(http);
 var PORT = process.env.PORT || 3002
 
-const userVote = [
-    {
-        a:3,
-        b:4,
-        c:10,
-        d:5 
-    }
-]
+var userVote = {
+    a:3,
+    b:4,
+    c:10,
+    d:5 
+}
 
 app.get('/', function (req, res) {
     res.send()
@@ -25,6 +23,9 @@ io.on('connection', function (socket) {
     io.emit('dataSendFront', userVote)
     socket.on('voteSendServer',function(e) {
         console.log('e',e)
+        userVote[e]++;
+        io.emit('dataSendFront', userVote)
+        console.log("userVote",userVote)
     })
 });
 http.listen(PORT,function(){
