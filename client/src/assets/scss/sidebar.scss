@@ -1,0 +1,42 @@
+.sidebar-list {
+    .p-sidebar-content {
+        height: 100%;
+    }
+
+    &-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        &-delete{
+            color: rgb(255, 99, 132) !important;
+            &:focus {
+                outline: 0 none;
+                outline-offset: 0;
+                box-shadow: none !important
+            }
+            &.p-button.p-button-text:enabled:active {
+                background: transparent;
+                color: transparent;
+                border-color: transparent;
+            }
+            &:enabled:hover {
+                background: rgba(255, 99, 132, 0.2) !important;
+                border-color: rgb(255, 99, 132) !important;
+            }
+
+        }
+    }
+
+    &-add-vote {
+        position: absolute !important;
+        bottom: 15px !important;
+        width: 18rem;
+        border-radius: 12px;
+        &-modal{
+            width: 50%;
+            .p-dialog-content{
+                height: 300px;
+            }
+        }
+    }
+}
