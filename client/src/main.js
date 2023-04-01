@@ -7,7 +7,7 @@ Vue.config.productionTip = false
 
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: 'https://mat-vote-app.onrender.com',
+  connection: process.env.VUE_APP_SERVER_URL,
   transports: ['websocket', 'polling', 'flashsocket']
 
 }));
