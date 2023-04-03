@@ -1,10 +1,6 @@
 var app = require('express')()
 var http = require('http').Server(app)
-var io = require('socket.io')(http, {
-    cors: {
-        origin: '*',
-    }
-})
+var io = require('socket.io')(http)
 var PORT = process.env.PORT || 3002
 
 var userVote = {
