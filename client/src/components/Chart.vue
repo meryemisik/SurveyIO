@@ -47,9 +47,8 @@
         @change="changeChartType($event)"
       />
 
-      <div class="chart">
-        --- {{ this.newChart[0].chartType }}
-        <canvas class="new-chart"></canvas>
+      <div class="chart-modal">
+        <canvas ref="canvasModal" id="canvasModal"></canvas>
       </div>
     </Dialog>
   </div>
@@ -64,8 +63,11 @@ export default {
       console.log("socket connected 2");
     },
     dataSendFront(data) {
-      if (this.chartBarx != null) {
-        this.chartBarx.destroy();
+      if (this.chartBar != null) {
+        this.chartBar.destroy();
+      }
+      if (this.chartBarModal != null) {
+        this.chartBarModal.destroy();
       }
       this.dataSendChild = data;
       this.chart();
@@ -91,7 +93,7 @@ export default {
       visibleLeft: false,
       dataSendChild: null,
       chartBar: null,
-      chartBarx:null,
+      chartBarModal:null,
       isButtonDisabled: false,
       selectedChart: null,
       charts: [
@@ -101,7 +103,7 @@ export default {
         { name: "Line Chart", type: "line" },
         { name: "Polar Area Chart", type: "polarArea" },
         { name: "Radar Chart", type: "radar" },
-        { name: "Scatter Chart", codtypee: "scatter" },
+        { name: "Scatter Chart", type: "scatter" },
       ],
     };
   },
@@ -119,15 +121,11 @@ export default {
               data: Object.values(this.dataSendChild),
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 159, 64, 0.2)",
-                "rgba(153, 102, 255, 0.2)",
-                "rgba(75, 192, 192, 0.2)",
+                "rgba(255, 159, 64, 0.2)"
               ],
               borderColor: [
                 "rgb(255, 99, 132)",
-                "rgb(255, 159, 64)",
-                "rgb(153, 102, 255)",
-                "rgb(75, 192, 192)",
+                "rgb(255, 159, 64)"
               ],
               borderWidth: 1,
             },
@@ -164,15 +162,15 @@ export default {
       this.addVoteModalVisible = true;
     },
     changeChartType(e) {
-      console.log("e", e.value.type);
       this.newChart[0].chartType = e.value.type
-
-      var ctx = document.getElementsByClassName('new-chart').getContext("2d");
-      console.log(this.newChart[0].chartType)
-      this.chartBarx = new Chart(ctx, {
-        type:this.newChart[0].chartType,
+      if (this.chartBarModal != null) {
+        this.chartBarModal.destroy();
+      }
+      var ctxModal = document.getElementById("canvasModal").getContext("2d");
+      this.chartBarModal = new Chart(ctxModal, {
+        type: this.newChart[0].chartType,
         data: {
-          labels: ["Label One", "Label Two"],
+          labels: ["Ax", "Bx"],
           datasets: [
             {
               label: "Your Vote Title",
@@ -195,23 +193,9 @@ export default {
               beginAtZero: true,
             },
           },
-          onClick: (e) => {
-            var points = e.chart.getElementsAtEventForMode(
-              e,
-              "nearest",
-              { intersect: true },
-              true
-            );
-            if (points.length) {
-              const firstPoint = points[0];
-              var label = e.chart.data.labels[firstPoint.index];
-            }
-            this.addVote(label);
-          },
         },
       });
-
-
+      
     },
   },
 };

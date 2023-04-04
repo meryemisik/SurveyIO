@@ -25,7 +25,7 @@ Vue.component('Dropdown', Dropdown);
 Vue.use(new VueSocketIO({
   debug: true,
   connection: process.env.VUE_APP_SERVER_URL,
-  transports: ['websocket', 'polling', 'flashsocket']
+  transports: ['websocket']
 
 }));
 new Vue({

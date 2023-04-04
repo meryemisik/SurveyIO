@@ -46,4 +46,12 @@
         }
       }
     }
+    &-modal{
+      width: 200px;
+      aspect-ratio: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
   }

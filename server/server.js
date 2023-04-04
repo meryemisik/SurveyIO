@@ -9,6 +9,50 @@ var userVote = {
     c: 10,
     d: 5
 }
+// var userVote = [
+//     {
+//         id:'deneme',
+//         chartTitle: "Meryem'i seviyorum",
+//         votingOptions: [
+//             {
+//                 labelTitle: 'Meyro',
+//                 voteCount: 3,
+//                 color: "pink"
+//             },
+//             {
+//                 labelTitle: 'Meyruş',
+//                 voteCount: 10,
+//                 color: "blue"
+//             },
+//             {
+//                 labelTitle: 'Mery',
+//                 voteCount: 8,
+//                 color: "red"
+//             },
+//             {
+//                 labelTitle: 'Merr me',
+//                 voteCount: 1,
+//                 color: "yellow"
+//             },
+//         ]
+//     },
+//     {
+//         id:'deneme1',
+//         chartTitle: "bitiyorum Sana",
+//         votingOptions: [
+//             {
+//                 labelTitle: 'Meyroooo',
+//                 voteCount: 35,
+//                 color: "blue"
+//             },
+//             {
+//                 labelTitle: 'Meyruşki',
+//                 voteCount: 48,
+//                 color: "orange"
+//             },
+//         ]
+//     }
+// ]
 
 app.get('/', function (req, res) {
     res.send()
