@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import App from './App.vue'
-import VueSocketIO from 'vue-socket.io';
+import VueSocketIO from 'vue-socket.io'
+import SocketIO from 'socket.io-client'
 import PrimeVue from 'primevue/config';
 
 import 'primevue/resources/themes/saga-blue/theme.css'
@@ -22,9 +23,11 @@ Vue.component('Button', Button);
 Vue.component('Dialog', Dialog);
 Vue.component('Dropdown', Dropdown);
 
+const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
+
 Vue.use(new VueSocketIO({
   debug: true,
-  connection: process.env.VUE_APP_SERVER_URL,
+  connection: socketConnection,
   transports: ['websocket']
 
 }));
