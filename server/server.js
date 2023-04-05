@@ -16,6 +16,7 @@ var userVote = {
 // var userVote = [
 //     {
 //         id:'deneme',
+//         chartType:'bar,
 //         chartTitle: "Meryem'i seviyorum",
 //         votingOptions: [
 //             {
@@ -42,6 +43,7 @@ var userVote = {
 //     },
 //     {
 //         id:'deneme1',
+//         chartType:'bubble',
 //         chartTitle: "bitiyorum Sana",
 //         votingOptions: [
 //             {

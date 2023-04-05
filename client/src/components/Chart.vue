@@ -1,5 +1,7 @@
 <template>
   <div>
+    <photoshop v-model="colors" v-show="visibleColorPicker" class="chart-color-picker"/>
+
     <div>
       <Sidebar :visible.sync="visibleLeft" class="sidebar-list">
         <div class="sidebar-list-item">
@@ -39,16 +41,23 @@
       :visible.sync="addVoteModalVisible"
       class="sidebar-list-add-vote-modal"
     >
-      <Dropdown
+      <div>
+        <Dropdown
         v-model="selectedChart"
         :options="charts"
         optionLabel="name"
         placeholder="Select Chart Type"
         @change="changeChartType($event)"
       />
+      <div class="column-style">
+        <label>Column Name</label>
+        <InputText type="text" class="p-inputtext-sm" />
+        <div class="select-color" @click="changeColumnsColor"></div>
+      </div>
+      </div>
 
       <div class="chart-modal">
-        <canvas ref="canvasModal" id="canvasModal"></canvas>
+        <canvas width="250px"  ref="canvasModal" id="canvasModal"></canvas>
       </div>
     </Dialog>
   </div>
@@ -75,6 +84,8 @@ export default {
   },
   data() {
     return {
+      visibleColorPicker:false,
+      colors:'#194d33',
       newChart:[
         {
           chartType:'bubble',
@@ -109,6 +120,9 @@ export default {
   },
 
   methods: {
+    changeColumnsColor(){
+      this.visibleColorPicker = true
+    },
     chart() {
       var ctx = document.getElementById("canvas").getContext("2d");
       this.chartBar = new Chart(ctx, {
