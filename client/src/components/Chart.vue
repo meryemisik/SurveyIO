@@ -1,18 +1,16 @@
 <template>
   <div>
-    <photoshop v-model="colors" v-show="visibleColorPicker" class="chart-color-picker"/>
+    <photoshop
+      v-model="colors"
+      v-show="visibleColorPicker"
+      class="chart-color-picker"
+    />
 
     <div>
       <Sidebar :visible.sync="visibleLeft" class="sidebar-list">
-        <div class="sidebar-list-item">
-          Liste
-          <Button
-            icon="pi pi-trash"
-            class="p-button-text sidebar-list-item-delete"
-          />
-        </div>
-        <div class="sidebar-list-item">
-          Liste
+
+        <div class="sidebar-list-item" v-for="item in dataChartList">
+          <span @click="setChart(item)">{{ item.chartTitle }}</span>
           <Button
             icon="pi pi-trash"
             class="p-button-text sidebar-list-item-delete"
@@ -43,21 +41,21 @@
     >
       <div>
         <Dropdown
-        v-model="selectedChart"
-        :options="charts"
-        optionLabel="name"
-        placeholder="Select Chart Type"
-        @change="changeChartType($event)"
-      />
-      <div class="column-style">
-        <label>Column Name</label>
-        <InputText type="text" class="p-inputtext-sm" />
-        <div class="select-color" @click="changeColumnsColor"></div>
-      </div>
+          v-model="selectedChart"
+          :options="charts"
+          optionLabel="name"
+          placeholder="Select Chart Type"
+          @change="changeChartType($event)"
+        />
+        <div class="column-style">
+          <label>Column Name</label>
+          <InputText type="text" class="p-inputtext-sm" />
+          <div class="select-color" @click="changeColumnsColor"></div>
+        </div>
       </div>
 
       <div class="chart-modal">
-        <canvas width="250px"  ref="canvasModal" id="canvasModal"></canvas>
+        <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
       </div>
     </Dialog>
   </div>
@@ -72,39 +70,41 @@ export default {
       console.log("socket connected 2");
     },
     dataSendFront(data) {
-      if (this.chartBar != null) {
-        this.chartBar.destroy();
-      }
-      if (this.chartBarModal != null) {
-        this.chartBarModal.destroy();
-      }
-      this.dataSendChild = data;
-      this.chart();
+      this.dataChartList = data;
     },
   },
   data() {
     return {
-      visibleColorPicker:false,
-      colors:'#194d33',
-      newChart:[
+      currentData: 
         {
-          chartType:'bubble',
-          chartTitle : '',
-          chartColumns:[
+          chartTitle:'',
+          id: null,
+          chartType: null,
+          labels: [],
+          voteCounts: [],
+          colors: [],
+        },
+      visibleColorPicker: false,
+      colors: "#194d33",
+      newChart: [
+        {
+          chartType: "bubble",
+          chartTitle: "",
+          chartColumns: [
             {
-              label:'',
-              bgColor:'',
-              borderColor:''
-            }
-          ]
-
-        }
+              label: "",
+              bgColor: "",
+              borderColor: "",
+            },
+          ],
+        },
       ],
       addVoteModalVisible: false,
       visibleLeft: false,
+      dataChartList: null,
       dataSendChild: null,
       chartBar: null,
-      chartBarModal:null,
+      chartBarModal: null,
       isButtonDisabled: false,
       selectedChart: null,
       charts: [
@@ -120,27 +120,43 @@ export default {
   },
 
   methods: {
-    changeColumnsColor(){
-      this.visibleColorPicker = true
+    setChart(e) {
+        if (this.chartBar != null) {
+        this.chartBar.destroy();
+      }
+      var test = JSON.stringify(e);
+      let obj = JSON.parse(test);
+      console.log(obj)
+      this.currentData = {
+        chartTitle : obj.chartTitle,
+          id:  obj.id,
+          chartType: obj.chartType,
+          labels: [],
+          voteCounts: [],
+          colors: [],
+        },
+      obj.votingOptions.map((y) => {
+        this.currentData.labels.push(y.labelTitle)
+        this.currentData.colors.push(y.color)
+        this.currentData.voteCounts.push(y.voteCount)
+      });
+      this.chart()
+    },
+    changeColumnsColor() {
+      this.visibleColorPicker = true;
     },
     chart() {
       var ctx = document.getElementById("canvas").getContext("2d");
       this.chartBar = new Chart(ctx, {
-        type: "bar",
+        type:  this.currentData.chartType,
         data: {
-          labels: ["A", "B", "C", "D"],
+          labels: this.currentData.labels,
           datasets: [
             {
-              label: "Mat Vote",
-              data: Object.values(this.dataSendChild),
-              backgroundColor: [
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 159, 64, 0.2)"
-              ],
-              borderColor: [
-                "rgb(255, 99, 132)",
-                "rgb(255, 159, 64)"
-              ],
+              label: this.currentData.chartTitle,
+              data: Object.values(this.currentData.voteCounts),
+              backgroundColor: this.currentData.colors,
+              borderColor: ["rgb(255, 99, 132)", "rgb(255, 159, 64)"],
               borderWidth: 1,
             },
           ],
@@ -176,7 +192,7 @@ export default {
       this.addVoteModalVisible = true;
     },
     changeChartType(e) {
-      this.newChart[0].chartType = e.value.type
+      this.newChart[0].chartType = e.value.type;
       if (this.chartBarModal != null) {
         this.chartBarModal.destroy();
       }
@@ -191,12 +207,9 @@ export default {
               data: Object.values(this.dataSendChild),
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 159, 64, 0.2)"
+                "rgba(255, 159, 64, 0.2)",
               ],
-              borderColor: [
-                "rgb(255, 99, 132)",
-                "rgb(255, 159, 64)"
-              ],
+              borderColor: ["rgb(255, 99, 132)", "rgb(255, 159, 64)"],
               borderWidth: 1,
             },
           ],

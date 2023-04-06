@@ -7,58 +7,53 @@ var io = require('socket.io')(http, {
 })
 var PORT = process.env.PORT || 3002
 
-var userVote = {
-    a: 3,
-    b: 4,
-    c: 10,
-    d: 5
-}
-// var userVote = [
-//     {
-//         id:'deneme',
-//         chartType:'bar,
-//         chartTitle: "Meryem'i seviyorum",
-//         votingOptions: [
-//             {
-//                 labelTitle: 'Meyro',
-//                 voteCount: 3,
-//                 color: "pink"
-//             },
-//             {
-//                 labelTitle: 'Meyruş',
-//                 voteCount: 10,
-//                 color: "blue"
-//             },
-//             {
-//                 labelTitle: 'Mery',
-//                 voteCount: 8,
-//                 color: "red"
-//             },
-//             {
-//                 labelTitle: 'Merr me',
-//                 voteCount: 1,
-//                 color: "yellow"
-//             },
-//         ]
-//     },
-//     {
-//         id:'deneme1',
-//         chartType:'bubble',
-//         chartTitle: "bitiyorum Sana",
-//         votingOptions: [
-//             {
-//                 labelTitle: 'Meyroooo',
-//                 voteCount: 35,
-//                 color: "blue"
-//             },
-//             {
-//                 labelTitle: 'Meyruşki',
-//                 voteCount: 48,
-//                 color: "orange"
-//             },
-//         ]
-//     }
-// ]
+
+var userVote = [
+    {
+        id:'deneme',
+        chartType:'bar',
+        chartTitle: "Meryem'i seviyorum",
+        votingOptions: [
+            {
+                labelTitle: 'Meyro',
+                voteCount: 3,
+                color: "pink"
+            },
+            {
+                labelTitle: 'Meyruş',
+                voteCount: 10,
+                color: "blue"
+            },
+            {
+                labelTitle: 'Mery',
+                voteCount: 8,
+                color: "red"
+            },
+            {
+                labelTitle: 'Merr me',
+                voteCount: 1,
+                color: "yellow"
+            },
+        ]
+    },
+    {
+        id:'deneme1',
+        chartType:'doughnut',
+        chartTitle: "bitiyorum Sana",
+        votingOptions: [
+            {
+                labelTitle: 'Meyroooo',
+                voteCount: 35,
+                color: "blue"
+            },
+            {
+                labelTitle: 'Meyruşki',
+                voteCount: 48,
+                color: "orange"
+            }
+        ]
+    }
+]
 
 app.get('/', function (req, res) {
     res.send()
