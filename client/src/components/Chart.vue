@@ -1,4 +1,4 @@
-<template>
+<template >
   <div class="dashboard">
     <div class="dashboard-header"></div>
     <div class="dashboard-content mt-5">
@@ -53,7 +53,6 @@
           placeholder="Select Chart Type"
           @change="changeChartType($event)"
         />
-        --{{ newChart }}
         <div class="column-style">
           <label>Column Name</label>
           <InputText type="text" class="p-inputtext-sm" />
