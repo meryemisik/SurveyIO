@@ -23,9 +23,9 @@ import {
   useColorScheme,
   View,
   Dimensions,
-  TextInput,
-  Button,
 } from 'react-native';
+
+import {Button} from '@rneui/base';
 
 import {
   LineChart,
@@ -74,36 +74,53 @@ function Section({children, title}: SectionProps): JSX.Element {
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [chartList, setChartList] = React.useState([]);
+  const [activeChartID, setActiveChartID] = React.useState(null);
   const [currentChart, setCurrentChart] = React.useState(null);
 
-  const setChart = item => {
+  const setChart = id => {
+    console.log("geldikkkk id : ", {ID: id, activeID: activeChartID})
+    if((id != null && activeChartID == null) || id != activeChartID){
+      setActiveChartID(id);
+    }
+    var chartID = chartList.findIndex(x => x.id == id);
+    if(chartID >= 0){
+      console.log("chartID : ", chartID)
+    console.log("chartList : ", chartList)
     var chartData = {
-      id: item.id,
-      chartType: item.chartType,
-      chartTitle: item.chartTitle,
+      id: chartList[chartID].id,
+      chartType: chartList[chartID].chartType,
+      chartTitle: chartList[chartID].chartTitle,
       labels: [],
       voteCounts: [],
       colors: [],
     };
-    item.votingOptions.map(x => {
+    chartList[chartID].votingOptions.map(x => {
       chartData.labels.push(x.labelTitle);
       chartData.voteCounts.push(x.voteCount);
       chartData.colors.push(x.color);
     });
     console.log('chartData : ', chartData);
     setCurrentChart(chartData);
+    }
   };
 
-  const addVote = (label) => {
-console.log("seçilen : ", label)
-  }
+  const addVote = label => {
+    console.log('seçilen : ', label);
+    socket.emit('voteSendServer', {label: label, id: activeChartID});
+    setChart(activeChartID);
+  };
 
   useEffect(() => {
     socket.on('dataSendFront', datas => {
       setChartList(datas);
       console.log('gelen userlarxxx : ', datas);
+      
     });
   }, []);
+
+  useEffect(() => {
+    setChart(activeChartID);
+  }, [chartList]);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -122,6 +139,7 @@ console.log("seçilen : ", label)
           <View style={{padding: '5%'}}>
             {currentChart && (
               <>
+                <Text>{activeChartID}</Text>
                 <Text>{currentChart.chartTitle}</Text>
                 <LineChart
                   data={{
@@ -134,14 +152,12 @@ console.log("seçilen : ", label)
                   }}
                   width={(Dimensions.get('window').width * 90) / 100} // from react-native
                   height={220}
-                  yAxisLabel="$"
-                  yAxisSuffix="k"
                   yAxisInterval={1} // optional, defaults to 1
                   chartConfig={{
                     backgroundColor: '#e26a00',
                     backgroundGradientFrom: '#fb8c00',
                     backgroundGradientTo: '#ffa726',
-                    decimalPlaces: 2, // optional, defaults to 2dp
+                    decimalPlaces: 0, // optional, defaults to 2dp
                     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                     labelColor: (opacity = 1) =>
                       `rgba(255, 255, 255, ${opacity})`,
@@ -154,6 +170,7 @@ console.log("seçilen : ", label)
                       stroke: '#ffa726',
                     },
                   }}
+                  fromZero={true}
                   bezier
                   style={{
                     marginVertical: 8,
@@ -176,8 +193,8 @@ console.log("seçilen : ", label)
           {chartList?.length > 0 &&
             chartList.map((e, index) => (
               <View key={index} style={{padding: '0 5%', display: 'flex'}}>
-                <Text key={index}>{e.chartTitle}</Text>
-                <Button title="Seç" onPress={() => setChart(e)} />
+                <Text key={index}>{e.chartTitle} - {e.id}</Text>
+                <Button title="Seç" onPress={() => setChart(e.id)} />
               </View>
             ))}
         </View>
