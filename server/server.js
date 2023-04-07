@@ -16,17 +16,17 @@ var userVote = [
         votingOptions: [
             {
                 labelTitle: 'Meyro',
-                voteCount: 3,
+                voteCount: 1,
                 color: "pink"
             },
             {
                 labelTitle: 'Meyruş',
-                voteCount: 10,
+                voteCount: 1,
                 color: "blue"
             },
             {
                 labelTitle: 'Mery',
-                voteCount: 8,
+                voteCount: 1,
                 color: "red"
             },
             {
@@ -43,12 +43,12 @@ var userVote = [
         votingOptions: [
             {
                 labelTitle: 'Meyroooo',
-                voteCount: 35,
+                voteCount: 1,
                 color: "blue"
             },
             {
                 labelTitle: 'Meyruşki',
-                voteCount: 48,
+                voteCount: 1,
                 color: "orange"
             }
         ]
@@ -68,9 +68,10 @@ io.on('connection', function (socket) {
     io.emit('dataSendFront', userVote)
     socket.on('voteSendServer', function (e) {
         console.log('e', e)
-        userVote[e]++;
-        io.emit('dataSendFront', userVote)
-        console.log("userVote", userVote)
+        var userVoteIndexNumber =userVote.findIndex(x => x.id == e.id)
+        var votingOptionIndexNumber = userVote[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
+        userVote[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
+         io.emit('dataSendFront', userVote)
     })
 });
 http.listen(PORT, function () {

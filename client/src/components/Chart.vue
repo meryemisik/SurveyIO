@@ -8,9 +8,8 @@
 
     <div>
       <Sidebar :visible.sync="visibleLeft" class="sidebar-list">
-
         <div class="sidebar-list-item" v-for="item in dataChartList">
-          <span @click="setChart(item)">{{ item.chartTitle }}</span>
+          <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
           <Button
             icon="pi pi-trash"
             class="p-button-text sidebar-list-item-delete"
@@ -22,15 +21,19 @@
           @click="addVoteFunction()"
         />
       </Sidebar>
-      <Button @click="visibleLeft = true" label="Submit" />
+      <Button @click="visibleLeft = true" label="Chart List" />
     </div>
     <div class="chart">
       <canvas ref="canvas" id="canvas"></canvas>
-      <div class="chart-vote-button">
-        <button @click="addVote('a')" :disabled="isButtonDisabled">A</button>
-        <button @click="addVote('b')" :disabled="isButtonDisabled">B</button>
-        <button @click="addVote('c')" :disabled="isButtonDisabled">C</button>
-        <button @click="addVote('d')" :disabled="isButtonDisabled">D</button>
+      {{ currentData.id }}
+      <div class="chart-vote-button" v-for="item in currentData.labels">
+        {{ item }}
+        <button
+          v-if="currentData.labels != []"
+          @click="addVote(item, currentData.id)"
+        >
+          {{ item }}
+        </button>
       </div>
     </div>
 
@@ -71,19 +74,20 @@ export default {
     },
     dataSendFront(data) {
       this.dataChartList = data;
+      this.setChart(this.activeChartId)
     },
   },
   data() {
     return {
-      currentData: 
-        {
-          chartTitle:'',
-          id: null,
-          chartType: null,
-          labels: [],
-          voteCounts: [],
-          colors: [],
-        },
+      activeChartId: null,
+      currentData: {
+        chartTitle: "",
+        id: null,
+        chartType: null,
+        labels: [],
+        voteCounts: [],
+        colors: [],
+      },
       visibleColorPicker: false,
       colors: "#194d33",
       newChart: [
@@ -121,26 +125,34 @@ export default {
 
   methods: {
     setChart(e) {
-        if (this.chartBar != null) {
+      this.activeChartId = e;
+      var currentChart = {}
+      this.dataChartList.findIndex(checkChart);
+      function checkChart(chart) {
+        if (chart.id == e) {
+          currentChart = chart
+          return chart;
+        }
+      }
+      if (this.chartBar != null) {
         this.chartBar.destroy();
       }
-      var test = JSON.stringify(e);
+      var test = JSON.stringify(currentChart);
       let obj = JSON.parse(test);
-      console.log(obj)
-      this.currentData = {
-        chartTitle : obj.chartTitle,
-          id:  obj.id,
-          chartType: obj.chartType,
-          labels: [],
-          voteCounts: [],
-          colors: [],
-        },
-      obj.votingOptions.map((y) => {
-        this.currentData.labels.push(y.labelTitle)
-        this.currentData.colors.push(y.color)
-        this.currentData.voteCounts.push(y.voteCount)
-      });
-      this.chart()
+      (this.currentData = {
+        chartTitle: obj.chartTitle,
+        id: obj.id,
+        chartType: obj.chartType,
+        labels: [],
+        voteCounts: [],
+        colors: [],
+      }),
+        obj.votingOptions.map((y) => {
+          this.currentData.labels.push(y.labelTitle);
+          this.currentData.colors.push(y.color);
+          this.currentData.voteCounts.push(y.voteCount);
+        });
+      this.chart();
     },
     changeColumnsColor() {
       this.visibleColorPicker = true;
@@ -148,7 +160,7 @@ export default {
     chart() {
       var ctx = document.getElementById("canvas").getContext("2d");
       this.chartBar = new Chart(ctx, {
-        type:  this.currentData.chartType,
+        type: this.currentData.chartType,
         data: {
           labels: this.currentData.labels,
           datasets: [
@@ -162,11 +174,6 @@ export default {
           ],
         },
         options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
           onClick: (e) => {
             var points = e.chart.getElementsAtEventForMode(
               e,
@@ -183,8 +190,8 @@ export default {
         },
       });
     },
-    addVote(e) {
-      this.$socket.emit("voteSendServer", e);
+    addVote(e, id) {
+      this.$socket.emit("voteSendServer", { label: e, id: id });
       this.isButtonDisabled = true;
     },
     addVoteFunction() {
@@ -214,15 +221,7 @@ export default {
             },
           ],
         },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
       });
-      
     },
   },
 };
