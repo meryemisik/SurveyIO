@@ -12,7 +12,7 @@ var userVote = [
     {
         id:'deneme',
         chartType:'bar',
-        chartTitle: "Meryem'i seviyorum",
+        chartTitle: "Bar Chart",
         votingOptions: [
             {
                 labelTitle: 'Meyro',
@@ -39,7 +39,85 @@ var userVote = [
     {
         id:'deneme1',
         chartType:'doughnut',
-        chartTitle: "bitiyorum Sana",
+        chartTitle: "Doughnut Chart",
+        votingOptions: [
+            {
+                labelTitle: 'Meyroooo',
+                voteCount: 1,
+                color: "blue"
+            },
+            {
+                labelTitle: 'Meyruşki',
+                voteCount: 1,
+                color: "orange"
+            }
+        ]
+    },
+    {
+        id:'deneme2',
+        chartType:'line',
+        chartTitle: "Line Chart",
+        votingOptions: [
+            {
+                labelTitle: 'Meyro',
+                voteCount: 1,
+                color: "pink"
+            },
+            {
+                labelTitle: 'Meyruş',
+                voteCount: 1,
+                color: "blue"
+            },
+            {
+                labelTitle: 'Mery',
+                voteCount: 1,
+                color: "red"
+            },
+            {
+                labelTitle: 'Merr me',
+                voteCount: 1,
+                color: "yellow"
+            },
+        ]
+    },
+    {
+        id:'deneme3',
+        chartType:'polarArea',
+        chartTitle: "PolarArea Chart ",
+        votingOptions: [
+            {
+                labelTitle: 'Meyroooo',
+                voteCount: 1,
+                color: "blue"
+            },
+            {
+                labelTitle: 'Meyruşki',
+                voteCount: 1,
+                color: "orange"
+            }
+        ]
+    },
+    {
+        id:'deneme4',
+        chartType:'radar',
+        chartTitle: "Radar Chart",
+        votingOptions: [
+            {
+                labelTitle: 'Meyroooo',
+                voteCount: 1,
+                color: "blue"
+            },
+            {
+                labelTitle: 'Meyruşki',
+                voteCount: 1,
+                color: "orange"
+            }
+        ]
+    },
+    {
+        id:'deneme5',
+        chartType:'scatter',
+        chartTitle: "ScatterArea Chart",
         votingOptions: [
             {
                 labelTitle: 'Meyroooo',

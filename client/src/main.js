@@ -15,6 +15,8 @@ import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
+import Card from 'primevue/card';
+import ColorPicker from 'primevue/colorpicker';
 
 Vue.use(PrimeVue);
 Vue.config.productionTip = false
@@ -25,6 +27,8 @@ Vue.component('Button', Button);
 Vue.component('Dialog', Dialog);
 Vue.component('Dropdown', Dropdown);
 Vue.component('InputText', InputText);
+Vue.component('Card', Card);
+Vue.component('ColorPicker', ColorPicker);
 
 const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
 
