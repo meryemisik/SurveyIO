@@ -1,40 +1,43 @@
 <template>
-  <div>
-    <photoshop
-      v-model="colors"
-      v-show="visibleColorPicker"
-      class="chart-color-picker"
-    />
-
-    <div>
-      <Sidebar :visible.sync="visibleLeft" class="sidebar-list">
-        <div class="sidebar-list-item" v-for="item in dataChartList">
-          <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
-          <Button
-            icon="pi pi-trash"
-            class="p-button-text sidebar-list-item-delete"
-          />
-        </div>
+  <div class="dashboard">
+    <div class="dashboard-header"></div>
+    <div class="dashboard-content mt-5">
+      <Card class="chart mt-5">
+        <template #title> {{ currentData.chartTitle }} </template>
+        <template #content>
+          <div class="chart">
+            <canvas ref="canvas" id="canvas"></canvas>
+            <div class="chart-vote-button">
+              <div
+                class="chart-vote-button-list"
+                v-for="item in currentData.labels"
+              >
+                <button
+                  v-if="currentData.labels != []"
+                  @click="addVote(item, currentData.id)"
+                >
+                  {{ item }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </Card>
+    </div>
+    <div class="dashboard-list">
+      <h4 class="dashboard-list-header">Chart List</h4>
+      <div class="dashboard-list-item" v-for="item in dataChartList">
+        <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
         <Button
+          icon="pi pi-trash"
+          class="p-button-text sidebar-list-item-delete"
+        />
+      </div>
+      <Button
           label="Add Vote"
           class="p-button-success sidebar-list-add-vote"
           @click="addVoteFunction()"
         />
-      </Sidebar>
-      <Button @click="visibleLeft = true" label="Chart List" />
-    </div>
-    <div class="chart">
-      <canvas ref="canvas" id="canvas"></canvas>
-      {{ currentData.id }}
-      <div class="chart-vote-button" v-for="item in currentData.labels">
-        {{ item }}
-        <button
-          v-if="currentData.labels != []"
-          @click="addVote(item, currentData.id)"
-        >
-          {{ item }}
-        </button>
-      </div>
     </div>
 
     <Dialog
@@ -50,10 +53,11 @@
           placeholder="Select Chart Type"
           @change="changeChartType($event)"
         />
+        --{{ newChart }}
         <div class="column-style">
           <label>Column Name</label>
           <InputText type="text" class="p-inputtext-sm" />
-          <div class="select-color" @click="changeColumnsColor"></div>
+          <ColorPicker v-model="color" />
         </div>
       </div>
 
@@ -74,11 +78,12 @@ export default {
     },
     dataSendFront(data) {
       this.dataChartList = data;
-      this.setChart(this.activeChartId)
+      this.setChart(this.activeChartId);
     },
   },
   data() {
     return {
+      color:null,
       activeChartId: null,
       currentData: {
         chartTitle: "",
@@ -126,11 +131,11 @@ export default {
   methods: {
     setChart(e) {
       this.activeChartId = e;
-      var currentChart = {}
+      var currentChart = {};
       this.dataChartList.findIndex(checkChart);
       function checkChart(chart) {
         if (chart.id == e) {
-          currentChart = chart
+          currentChart = chart;
           return chart;
         }
       }
