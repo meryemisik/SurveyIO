@@ -1,4 +1,4 @@
-<template >
+<template>
   <div class="dashboard">
     <div class="dashboard-header"></div>
     <div class="dashboard-content mt-5">
@@ -34,10 +34,10 @@
         />
       </div>
       <Button
-          label="Add Vote"
-          class="p-button-success sidebar-list-add-vote"
-          @click="addVoteFunction()"
-        />
+        label="Add Vote"
+        class="p-button-success sidebar-list-add-vote"
+        @click="addVoteFunction()"
+      />
     </div>
 
     <Dialog
@@ -82,7 +82,7 @@ export default {
   },
   data() {
     return {
-      color:null,
+      color: null,
       activeChartId: null,
       currentData: {
         chartTitle: "",
@@ -178,6 +178,13 @@ export default {
           ],
         },
         options: {
+          scale: {
+            ticks: {
+              precision: 0,
+              stepSize: 1,
+              beginAtZero: true,
+            },
+          },
           onClick: (e) => {
             var points = e.chart.getElementsAtEventForMode(
               e,
@@ -224,6 +231,28 @@ export default {
               borderWidth: 1,
             },
           ],
+        },
+        options: {
+          scale: {
+            ticks: {
+              precision: 0,
+              stepSize: 1,
+              beginAtZero: true,
+            },
+          },
+          onClick: (e) => {
+            var points = e.chart.getElementsAtEventForMode(
+              e,
+              "nearest",
+              { intersect: true },
+              true
+            );
+            if (points.length) {
+              const firstPoint = points[0];
+              var label = e.chart.data.labels[firstPoint.index];
+            }
+            this.addVote(label);
+          },
         },
       });
     },
