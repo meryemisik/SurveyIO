@@ -34,18 +34,19 @@
         />
       </div>
       <Button
-        label="Add Vote"
+        label="Create a Survey"
         class="p-button-success sidebar-list-add-vote"
-        @click="addVoteFunction()"
+        @click="createSurvey()"
       />
     </div>
 
     <Dialog
-      header="Add Vote"
+      header="Add Survey"
       :visible.sync="addVoteModalVisible"
       class="sidebar-list-add-vote-modal"
     >
       <div>
+        {{ newChart }}
         <Dropdown
           v-model="selectedChart"
           :options="charts"
@@ -53,10 +54,13 @@
           placeholder="Select Chart Type"
           @change="changeChartType($event)"
         />
-        <div class="column-style">
-          <label>Column Name</label>
-          <InputText type="text" class="p-inputtext-sm" />
+        <div class="label-columns" v-if="selectedChart">
+          <label>Columns & Background</label>
+         <div class="label-columns-item">
+          <InputText type="text" class="p-inputtext-sm" @input="changeLabelName" v-model.trim="labelName" />
           <ColorPicker v-model="color" />
+          <i class="pi pi-check" v-show="addColumnVisible" @click="addColumnFunction"></i>
+         </div>
         </div>
       </div>
 
@@ -82,6 +86,8 @@ export default {
   },
   data() {
     return {
+      labelName:null,
+      addColumnVisible:false,
       color: null,
       activeChartId: null,
       currentData: {
@@ -96,7 +102,7 @@ export default {
       colors: "#194d33",
       newChart: [
         {
-          chartType: "bubble",
+          chartType: "bar",
           chartTitle: "",
           chartColumns: [
             {
@@ -110,7 +116,6 @@ export default {
       addVoteModalVisible: false,
       visibleLeft: false,
       dataChartList: null,
-      dataSendChild: null,
       chartBar: null,
       chartBarModal: null,
       isButtonDisabled: false,
@@ -128,6 +133,16 @@ export default {
   },
 
   methods: {
+    addColumnFunction(){
+      this.newChart[0].chartColumns[0].label = this.labelName
+      
+    },
+    changeLabelName(){
+      this.addColumnVisible = true
+      if(!this.labelName){
+        this.addColumnVisible = false
+      }
+    },
     setChart(e) {
       this.activeChartId = e;
       var currentChart = {};
@@ -143,20 +158,23 @@ export default {
       }
       var test = JSON.stringify(currentChart);
       let obj = JSON.parse(test);
-      (this.currentData = {
+      this.currentData = {
         chartTitle: obj.chartTitle,
         id: obj.id,
         chartType: obj.chartType,
         labels: [],
         voteCounts: [],
         colors: [],
-      }),
+      }
+
+      if (obj) {
         obj.votingOptions.map((y) => {
           this.currentData.labels.push(y.labelTitle);
           this.currentData.colors.push(y.color);
           this.currentData.voteCounts.push(y.voteCount);
         });
       this.chart();
+      }
     },
     changeColumnsColor() {
       this.visibleColorPicker = true;
@@ -205,24 +223,36 @@ export default {
       this.$socket.emit("voteSendServer", { label: e, id: id });
       this.isButtonDisabled = true;
     },
-    addVoteFunction() {
+    async createSurvey() {
       this.visibleLeft = false;
       this.addVoteModalVisible = true;
+     setTimeout(()=>{
+      this.changeChartType(this.selectedChart);
+     },1500)
     },
     changeChartType(e) {
-      this.newChart[0].chartType = e.value.type;
-      if (this.chartBarModal != null) {
+     
+      if (!!e) {
+        if (this.chartBarModal != null) {
         this.chartBarModal.destroy();
       }
+        this.selectedChart = e.value.type;
+        this.newChart[0].chartType = e.value.type;
+      }
+      else{
+        console.log(e)
+      }
+      console.log('-', this.selectedChart)
+      
       var ctxModal = document.getElementById("canvasModal").getContext("2d");
       this.chartBarModal = new Chart(ctxModal, {
-        type: this.newChart[0].chartType,
+        type: this.selectedChart,
         data: {
           labels: ["Ax", "Bx"],
           datasets: [
             {
               label: "Your Vote Title",
-              data: Object.values(this.dataSendChild),
+              data: [1, 1],
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
                 "rgba(255, 159, 64, 0.2)",

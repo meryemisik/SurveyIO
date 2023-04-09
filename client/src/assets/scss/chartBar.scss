@@ -1,7 +1,8 @@
-#canvas{
+#canvas {
   max-height: 400px !important;
   width: 560px !important;
 }
+
 .dashboard {
   &-header {
     background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
@@ -15,10 +16,12 @@
     background-color: #e2e2dc;
     width: 100vw;
     height: calc(100vh - 100px);
-    .p-card-title{
+
+    .p-card-title {
       padding: 10px 20px;
       text-transform: uppercase;
     }
+
   }
 
   &-list {
@@ -69,7 +72,7 @@
 
 .chart {
   padding: 20px;
-  margin:  auto;
+  margin: auto;
   width: 600px;
   aspect-ratio: auto;
   display: flex;
@@ -153,8 +156,24 @@
   cursor: pointer;
 }
 
-.column-style {
+.label-columns {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 10px;
+  flex-direction: column;
+  margin-top: 10px;
+
+  .p-inputtext {
+    padding: 3px !important;
+    border-radius: 4px;
+  }
+  .p-colorpicker-preview{
+    height: 20px !important;
+    width: 20px !important;
+    margin-left: 5px;
+  }
+
+  // &-item {
+  //   background-color: pink;
+  // }
 }
