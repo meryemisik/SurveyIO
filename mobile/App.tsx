@@ -22,21 +22,13 @@ import {
   Text,
   useColorScheme,
   View,
-  Dimensions,
 } from 'react-native';
 
 import {Button} from '@rneui/base';
 
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from 'react-native-chart-kit';
-
 import {Colors} from 'react-native/Libraries/NewAppScreen';
+
+import ChartType from './components/ChartType';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -78,14 +70,11 @@ function App(): JSX.Element {
   const [currentChart, setCurrentChart] = React.useState(null);
 
   const setChart = id => {
-    console.log("geldikkkk id : ", {ID: id, activeID: activeChartID})
     if((id != null && activeChartID == null) || id != activeChartID){
       setActiveChartID(id);
     }
     var chartID = chartList.findIndex(x => x.id == id);
     if(chartID >= 0){
-      console.log("chartID : ", chartID)
-    console.log("chartList : ", chartList)
     var chartData = {
       id: chartList[chartID].id,
       chartType: chartList[chartID].chartType,
@@ -99,13 +88,11 @@ function App(): JSX.Element {
       chartData.voteCounts.push(x.voteCount);
       chartData.colors.push(x.color);
     });
-    console.log('chartData : ', chartData);
     setCurrentChart(chartData);
     }
   };
 
   const addVote = label => {
-    console.log('seçilen : ', label);
     socket.emit('voteSendServer', {label: label, id: activeChartID});
     setChart(activeChartID);
   };
@@ -113,7 +100,6 @@ function App(): JSX.Element {
   useEffect(() => {
     socket.on('dataSendFront', datas => {
       setChartList(datas);
-      console.log('gelen userlarxxx : ', datas);
       
     });
   }, []);
@@ -136,47 +122,13 @@ function App(): JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <View>
+          
           <View style={{padding: '5%'}}>
             {currentChart && (
               <>
-                <Text>{activeChartID}</Text>
                 <Text>{currentChart.chartTitle}</Text>
-                <LineChart
-                  data={{
-                    labels: currentChart.labels,
-                    datasets: [
-                      {
-                        data: currentChart.voteCounts,
-                      },
-                    ],
-                  }}
-                  width={(Dimensions.get('window').width * 90) / 100} // from react-native
-                  height={220}
-                  yAxisInterval={1} // optional, defaults to 1
-                  chartConfig={{
-                    backgroundColor: '#e26a00',
-                    backgroundGradientFrom: '#fb8c00',
-                    backgroundGradientTo: '#ffa726',
-                    decimalPlaces: 0, // optional, defaults to 2dp
-                    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                    labelColor: (opacity = 1) =>
-                      `rgba(255, 255, 255, ${opacity})`,
-                    style: {
-                      borderRadius: 16,
-                    },
-                    propsForDots: {
-                      r: '6',
-                      strokeWidth: '2',
-                      stroke: '#ffa726',
-                    },
-                  }}
-                  fromZero={true}
-                  bezier
-                  style={{
-                    marginVertical: 8,
-                    borderRadius: 16,
-                  }}
-                />
+                <ChartType title={currentChart.chartType} labels={currentChart.labels} data={currentChart.voteCounts} colors={currentChart.colors}/>
+               
                 <View>
                   {currentChart.labels.map((e, index) => (
                     <Button title={e} key={index} onPress={() => addVote(e)} />
@@ -193,7 +145,7 @@ function App(): JSX.Element {
           {chartList?.length > 0 &&
             chartList.map((e, index) => (
               <View key={index} style={{padding: '0 5%', display: 'flex'}}>
-                <Text key={index}>{e.chartTitle} - {e.id}</Text>
+                <Text key={index}>{e.chartTitle}</Text>
                 <Button title="Seç" onPress={() => setChart(e.id)} />
               </View>
             ))}
