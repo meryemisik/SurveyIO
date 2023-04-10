@@ -46,21 +46,45 @@
       class="sidebar-list-add-vote-modal"
     >
       <div>
-        {{ newChart }}
         <Dropdown
           v-model="selectedChart"
           :options="charts"
           optionLabel="name"
           placeholder="Select Chart Type"
-          @change="changeChartType($event)"
+          @change="changeChartType(selectedChart)"
         />
         <div class="label-columns" v-if="selectedChart">
+          <label>Chart Title</label>
+          <div class="label-columns-item">
+            <InputText
+              type="text"
+              class="p-inputtext-sm"
+              v-model="newChartTitle"
+              @blur="changeChartTitle"
+            />
+            <ColorPicker v-model="color" format="rgb" />
+            <i
+              class="pi pi-check"
+              v-show="addColumnVisible"
+              @click="addColumnFunction"
+            ></i>
+          </div>
+
           <label>Columns & Background</label>
-         <div class="label-columns-item">
-          <InputText type="text" class="p-inputtext-sm" @input="changeLabelName" v-model.trim="labelName" />
-          <ColorPicker v-model="color" />
-          <i class="pi pi-check" v-show="addColumnVisible" @click="addColumnFunction"></i>
-         </div>
+          <div class="label-columns-item">
+            <InputText
+              type="text"
+              class="p-inputtext-sm"
+              @input="changeLabelName"
+              v-model.trim="labelName"
+            />
+            <ColorPicker v-model="color" format="rgb" />
+            <i
+              class="pi pi-check"
+              v-show="addColumnVisible"
+              @click="addColumnFunction"
+            ></i>
+          </div>
         </div>
       </div>
 
@@ -86,9 +110,15 @@ export default {
   },
   data() {
     return {
-      labelName:null,
-      addColumnVisible:false,
-      color: null,
+      newChartTitle: null,
+      newChartLabelName: [],
+      newChartColumnBgColor: [],
+      newChartColumnBorderColor: [],
+      newChartColumnScore: [],
+      visibleColorPicker: false,
+      labelName: null,
+      addColumnVisible: false,
+      color: { r: 255, g: 0, b: 94 },
       activeChartId: null,
       currentData: {
         chartTitle: "",
@@ -97,18 +127,22 @@ export default {
         labels: [],
         voteCounts: [],
         colors: [],
+        borderColors: [],
       },
-      visibleColorPicker: false,
-      colors: "#194d33",
       newChart: [
         {
           chartType: "bar",
           chartTitle: "",
-          chartColumns: [
+          votingOptions: [
             {
-              label: "",
-              bgColor: "",
-              borderColor: "",
+              labelTitle: "deneme1",
+              bgColor: "rgb(69 106 225 / 50%)",
+              borderColor: "rgb(69 106 225 / 100%)",
+            },
+            {
+              labelTitle: "deneme2",
+              bgColor: "rgb(200 0 159 / 50%)",
+              borderColor: "rgb(200 0 159 / 100%)",
             },
           ],
         },
@@ -119,61 +153,79 @@ export default {
       chartBar: null,
       chartBarModal: null,
       isButtonDisabled: false,
-      selectedChart: null,
+      selectedChart: { name: "Bar Chart", type: "bar" },
       charts: [
         { name: "Bar Chart", type: "bar" },
-        { name: "Bubble Chart", type: "bubble" },
-        { name: "Doughnut and Pie Charts", type: "doughnut" },
         { name: "Line Chart", type: "line" },
         { name: "Polar Area Chart", type: "polarArea" },
-        { name: "Radar Chart", type: "radar" },
-        { name: "Scatter Chart", type: "scatter" },
       ],
     };
   },
 
   methods: {
-    addColumnFunction(){
-      this.newChart[0].chartColumns[0].label = this.labelName
-      
+    addColumnFunction() {
+      this.newChart[0].votingOptions.push({
+        labelTitle: this.labelName,
+        bgColor: `rgb(${this.color.r} ${this.color.g} ${this.color.b} / 50%)`,
+        borderColor: `rgb(${this.color.r} ${this.color.g} ${this.color.b} / 100%)`,
+      });
+      this.getNewChartData();
     },
-    changeLabelName(){
-      this.addColumnVisible = true
-      if(!this.labelName){
-        this.addColumnVisible = false
+    getNewChartData() {
+      this.newChartLabelName = [];
+      this.newChartColumnBgColor = [];
+      this.newChartColumnBorderColor = [];
+      this.newChart[0].votingOptions.map((x) => {
+        this.newChartLabelName.push(x.labelTitle);
+        this.newChartColumnBgColor.push(x.bgColor);
+        this.newChartColumnBorderColor.push(x.borderColor);
+        this.newChartColumnScore.push(1)
+      });
+      this.createNewChart();
+    },
+    changeLabelName() {
+      this.addColumnVisible = true;
+      if (!this.labelName) {
+        this.addColumnVisible = false;
       }
+    },
+    changeChartTitle() {
+      this.createNewChart();
     },
     setChart(e) {
-      this.activeChartId = e;
-      var currentChart = {};
-      this.dataChartList.findIndex(checkChart);
-      function checkChart(chart) {
-        if (chart.id == e) {
-          currentChart = chart;
-          return chart;
+      if (e) {
+        this.activeChartId = e;
+        var currentChart = {};
+        this.dataChartList.findIndex(checkChart);
+        function checkChart(chart) {
+          if (chart.id == e) {
+            currentChart = chart;
+            return chart;
+          }
         }
-      }
-      if (this.chartBar != null) {
-        this.chartBar.destroy();
-      }
-      var test = JSON.stringify(currentChart);
-      let obj = JSON.parse(test);
-      this.currentData = {
-        chartTitle: obj.chartTitle,
-        id: obj.id,
-        chartType: obj.chartType,
-        labels: [],
-        voteCounts: [],
-        colors: [],
-      }
-
-      if (obj) {
-        obj.votingOptions.map((y) => {
-          this.currentData.labels.push(y.labelTitle);
-          this.currentData.colors.push(y.color);
-          this.currentData.voteCounts.push(y.voteCount);
-        });
-      this.chart();
+        if (this.chartBar != null) {
+          this.chartBar.destroy();
+        }
+        var test = JSON.stringify(currentChart);
+        let obj = JSON.parse(test);
+        this.currentData = {
+          chartTitle: obj.chartTitle,
+          id: obj.id,
+          chartType: obj.chartType,
+          labels: [],
+          voteCounts: [],
+          colors: [],
+          borderColors: [],
+        };
+        if (obj) {
+          obj.votingOptions.map((y) => {
+            this.currentData.labels.push(y.labelTitle);
+            this.currentData.colors.push(y.bgColor);
+            this.currentData.voteCounts.push(y.voteCount);
+            this.currentData.borderColors.push(y.borderColor);
+          });
+          this.chart();
+        }
       }
     },
     changeColumnsColor() {
@@ -198,10 +250,14 @@ export default {
         options: {
           scale: {
             ticks: {
+              min: 0,
               precision: 0,
               stepSize: 1,
               beginAtZero: true,
             },
+          },
+          scales: {
+            y: { beginAtZero: true },
           },
           onClick: (e) => {
             var points = e.chart.getElementsAtEventForMode(
@@ -226,38 +282,27 @@ export default {
     async createSurvey() {
       this.visibleLeft = false;
       this.addVoteModalVisible = true;
-     setTimeout(()=>{
-      this.changeChartType(this.selectedChart);
-     },1500)
+      setTimeout(() => {
+        this.changeChartType(this.selectedChart);
+      }, 500);
     },
-    changeChartType(e) {
-     
-      if (!!e) {
-        if (this.chartBarModal != null) {
+    createNewChart() {
+      if (this.chartBarModal != null) {
         this.chartBarModal.destroy();
       }
-        this.selectedChart = e.value.type;
-        this.newChart[0].chartType = e.value.type;
-      }
-      else{
-        console.log(e)
-      }
-      console.log('-', this.selectedChart)
-      
       var ctxModal = document.getElementById("canvasModal").getContext("2d");
       this.chartBarModal = new Chart(ctxModal, {
-        type: this.selectedChart,
+        type: this.selectedChart.type,
         data: {
-          labels: ["Ax", "Bx"],
+          labels: this.newChartLabelName,
           datasets: [
             {
-              label: "Your Vote Title",
-              data: [1, 1],
-              backgroundColor: [
-                "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 159, 64, 0.2)",
-              ],
-              borderColor: ["rgb(255, 99, 132)", "rgb(255, 159, 64)"],
+              label: this.newChartTitle
+                ? this.newChartTitle
+                : "Your Vote Title",
+              data: this.newChartColumnScore,
+              backgroundColor: this.newChartColumnBgColor,
+              borderColor: this.newChartColumnBorderColor,
               borderWidth: 1,
             },
           ],
@@ -285,6 +330,19 @@ export default {
           },
         },
       });
+    },
+    changeChartType(e) {
+      if (!!e) {
+        if (this.chartBarModal != null) {
+          this.chartBarModal.destroy();
+        }
+        if (this.newChart[0].votingOptions.length > 0) {
+          this.getNewChartData();
+        }
+        this.selectedChart = e;
+        this.newChart[0].chartType = e.type;
+        this.createNewChart();
+      }
     },
   },
 };

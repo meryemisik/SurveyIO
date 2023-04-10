@@ -17,40 +17,27 @@ var userVote = [
             {
                 labelTitle: 'Meyro',
                 voteCount: 1,
-                color: "pink"
+                bgColor: "pink",
+                borderColor:"pink"
             },
             {
                 labelTitle: 'Meyruş',
                 voteCount: 1,
-                color: "blue"
+                bgColor: "blue",
+                borderColor:"blue"
             },
             {
                 labelTitle: 'Mery',
                 voteCount: 1,
-                color: "red"
+                bgColor: "red",
+                borderColor:"red"
             },
             {
                 labelTitle: 'Merr me',
                 voteCount: 1,
-                color: "yellow"
+                bgColor: "yellow",
+                borderColor:"yellow"
             },
-        ]
-    },
-    {
-        id:'deneme1',
-        chartType:'doughnut',
-        chartTitle: "Doughnut Chart",
-        votingOptions: [
-            {
-                labelTitle: 'Meyroooo',
-                voteCount: 1,
-                color: "blue"
-            },
-            {
-                labelTitle: 'Meyruşki',
-                voteCount: 1,
-                color: "orange"
-            }
         ]
     },
     {
@@ -61,22 +48,26 @@ var userVote = [
             {
                 labelTitle: 'Meyro',
                 voteCount: 1,
-                color: "pink"
+                bgColor: "pink",
+                borderColor:"pink"
             },
             {
                 labelTitle: 'Meyruş',
                 voteCount: 1,
-                color: "blue"
+                bgColor: "blue",
+                borderColor:"blue"
             },
             {
                 labelTitle: 'Mery',
                 voteCount: 1,
-                color: "red"
+                bgColor: "red",
+                borderColor:"red"
             },
             {
                 labelTitle: 'Merr me',
                 voteCount: 1,
-                color: "yellow"
+                bgColor: "yellow",
+                borderColor:"yellow"
             },
         ]
     },
@@ -88,49 +79,17 @@ var userVote = [
             {
                 labelTitle: 'Meyroooo',
                 voteCount: 1,
-                color: "blue"
+                bgColor: "blue",
+                borderColor:"blue"
             },
             {
                 labelTitle: 'Meyruşki',
                 voteCount: 1,
-                color: "orange"
+                bgColor: "orange",
+                borderColor:"orange"
             }
         ]
     },
-    {
-        id:'deneme4',
-        chartType:'radar',
-        chartTitle: "Radar Chart",
-        votingOptions: [
-            {
-                labelTitle: 'Meyroooo',
-                voteCount: 1,
-                color: "blue"
-            },
-            {
-                labelTitle: 'Meyruşki',
-                voteCount: 1,
-                color: "orange"
-            }
-        ]
-    },
-    {
-        id:'deneme5',
-        chartType:'scatter',
-        chartTitle: "ScatterArea Chart",
-        votingOptions: [
-            {
-                labelTitle: 'Meyroooo',
-                voteCount: 1,
-                color: "blue"
-            },
-            {
-                labelTitle: 'Meyruşki',
-                voteCount: 1,
-                color: "orange"
-            }
-        ]
-    }
 ]
 
 app.get('/', function (req, res) {
