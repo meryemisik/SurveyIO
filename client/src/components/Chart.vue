@@ -60,7 +60,7 @@
               type="text"
               class="p-inputtext-sm"
               v-model="newChartTitle"
-              @blur="changeChartTitle"
+              @blur="changeChartTitle(newChartTitle)"
             />
             <ColorPicker v-model="color" format="rgb" />
             <i
@@ -71,12 +71,12 @@
           </div>
 
           <label>Columns & Background</label>
-          <div class="label-columns-item">
+          <div class="label-columns-item" v-for="(item, index) in newChart[0].votingOptions " :key="index">
             <InputText
               type="text"
               class="p-inputtext-sm"
               @input="changeLabelName"
-              v-model.trim="labelName"
+              v-model.trim="newChart[0].votingOptions[index].labelTitle"
             />
             <ColorPicker v-model="color" format="rgb" />
             <i
@@ -85,6 +85,7 @@
               @click="addColumnFunction"
             ></i>
           </div>
+          <Button @click="newChartSetData()"/>
         </div>
       </div>
 
@@ -135,14 +136,16 @@ export default {
           chartTitle: "",
           votingOptions: [
             {
-              labelTitle: "deneme1",
+              labelTitle: "First Title",
               bgColor: "rgb(69 106 225 / 50%)",
               borderColor: "rgb(69 106 225 / 100%)",
+              voteCount:0
             },
             {
-              labelTitle: "deneme2",
+              labelTitle: "Second Title",
               bgColor: "rgb(200 0 159 / 50%)",
               borderColor: "rgb(200 0 159 / 100%)",
+              voteCount:0
             },
           ],
         },
@@ -189,7 +192,8 @@ export default {
         this.addColumnVisible = false;
       }
     },
-    changeChartTitle() {
+    changeChartTitle(e) {
+      this.newChart[0].chartTitle =e
       this.createNewChart();
     },
     setChart(e) {
@@ -278,6 +282,14 @@ export default {
     addVote(e, id) {
       this.$socket.emit("voteSendServer", { label: e, id: id });
       this.isButtonDisabled = true;
+    },
+    newChartSetData(){
+      this.$socket.emit('newChartSendServer',{
+        id:Math.floor(Math.random() * Math.pow(10, 20)),
+        chartType:this.newChart[0].chartType,
+        chartTitle: this.newChart[0].chartTitle,
+        votingOptions: this.newChart[0].votingOptions,
+    })
     },
     async createSurvey() {
       this.visibleLeft = false;

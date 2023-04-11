@@ -103,6 +103,10 @@ io.on('connection', function (socket) {
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
     io.emit('dataSendFront', userVote)
+    socket.on('newChartSendServer', function (e) {
+         userVote.push(e)
+         io.emit('dataSendFront', userVote)
+    })
     socket.on('voteSendServer', function (e) {
         console.log('e', e)
         var userVoteIndexNumber =userVote.findIndex(x => x.id == e.id)
