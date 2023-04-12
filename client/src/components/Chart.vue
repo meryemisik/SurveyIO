@@ -8,14 +8,8 @@
           <div class="chart">
             <canvas ref="canvas" id="canvas"></canvas>
             <div class="chart-vote-button">
-              <div
-                class="chart-vote-button-list"
-                v-for="item in currentData.labels"
-              >
-                <button
-                  v-if="currentData.labels != []"
-                  @click="addVote(item, currentData.id)"
-                >
+              <div class="chart-vote-button-list" v-for="(item,index) in currentData.labels" :key="index">
+                <button v-if="currentData.labels != []" @click="addVote(item, currentData.id)" :style="{'background-color':currentData.colors[index], 'color':currentData.borderColors[index], 'border-color':currentData.borderColors[index]}">
                   {{ item }}
                 </button>
               </div>
@@ -28,64 +22,32 @@
       <h4 class="dashboard-list-header">Chart List</h4>
       <div class="dashboard-list-item" v-for="item in dataChartList">
         <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
-        <Button
-          icon="pi pi-trash"
-          class="p-button-text sidebar-list-item-delete"
-        />
+        <Button icon="pi pi-trash" class="p-button-text sidebar-list-item-delete" />
       </div>
-      <Button
-        label="Create a Survey"
-        class="p-button-success sidebar-list-add-vote"
-        @click="createSurvey()"
-      />
+      <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote" @click="createSurvey()" />
     </div>
 
-    <Dialog
-      header="Add Survey"
-      :visible.sync="addVoteModalVisible"
-      class="sidebar-list-add-vote-modal"
-    >
+    <Dialog header="Add Survey" :visible.sync="addVoteModalVisible" class="sidebar-list-add-vote-modal">
       <div>
-        <Dropdown
-          v-model="selectedChart"
-          :options="charts"
-          optionLabel="name"
-          placeholder="Select Chart Type"
-          @change="changeChartType(selectedChart)"
-        />
+        <Dropdown v-model="selectedChart" :options="charts" optionLabel="name" placeholder="Select Chart Type"
+          @change="changeChartType(selectedChart)" />
         <div class="label-columns" v-if="selectedChart">
           <label>Chart Title</label>
           <div class="label-columns-item">
-            <InputText
-              type="text"
-              class="p-inputtext-sm"
-              v-model="newChartTitle"
-              @blur="changeChartTitle(newChartTitle)"
-            />
+            <InputText type="text" class="p-inputtext-sm" v-model="newChartTitle"
+              @blur="changeChartTitle(newChartTitle)" />
             <ColorPicker v-model="color" format="rgb" />
-            <i
-              class="pi pi-check"
-              v-show="addColumnVisible"
-              @click="addColumnFunction"
-            ></i>
+            <i class="pi pi-check" v-show="addColumnVisible" @click="addColumnFunction"></i>
           </div>
 
           <label>Columns & Background</label>
           <div class="label-columns-item" v-for="(item, index) in newChart[0].votingOptions " :key="index">
-            <InputText
-              type="text"
-              class="p-inputtext-sm"
-              @input="changeLabelName"
-              v-model.trim="newChart[0].votingOptions[index].labelTitle"
-            />
+            <InputText type="text" class="p-inputtext-sm" @input="changeLabelName"
+              v-model.trim="newChart[0].votingOptions[index].labelTitle" />
             <ColorPicker v-model="color" format="rgb" />
-            <i
-              class="pi pi-check"
-              v-show="addColumnVisible"
-              @click="addColumnFunction"
-            ></i>
+            <i class="pi pi-check" v-show="addColumnVisible" @click="addColumnFunction"></i>
           </div>
-          <Button @click="newChartSetData()"/>
+          <Button @click="newChartSetData()" />
         </div>
       </div>
 
@@ -139,13 +101,13 @@ export default {
               labelTitle: "First Title",
               bgColor: "rgb(69 106 225 / 50%)",
               borderColor: "rgb(69 106 225 / 100%)",
-              voteCount:0
+              voteCount: 0
             },
             {
               labelTitle: "Second Title",
               bgColor: "rgb(200 0 159 / 50%)",
               borderColor: "rgb(200 0 159 / 100%)",
-              voteCount:0
+              voteCount: 0
             },
           ],
         },
@@ -160,7 +122,7 @@ export default {
       charts: [
         { name: "Bar Chart", type: "bar" },
         { name: "Line Chart", type: "line" },
-        { name: "Polar Area Chart", type: "polarArea" },
+        { name: "Pie Chart", type: "pie" },
       ],
     };
   },
@@ -178,6 +140,7 @@ export default {
       this.newChartLabelName = [];
       this.newChartColumnBgColor = [];
       this.newChartColumnBorderColor = [];
+      this.newChartColumnScore = [];
       this.newChart[0].votingOptions.map((x) => {
         this.newChartLabelName.push(x.labelTitle);
         this.newChartColumnBgColor.push(x.bgColor);
@@ -193,7 +156,7 @@ export default {
       }
     },
     changeChartTitle(e) {
-      this.newChart[0].chartTitle =e
+      this.newChart[0].chartTitle = e
       this.createNewChart();
     },
     setChart(e) {
@@ -260,22 +223,8 @@ export default {
               beginAtZero: true,
             },
           },
-          scales: {
-            y: { beginAtZero: true },
-          },
-          onClick: (e) => {
-            var points = e.chart.getElementsAtEventForMode(
-              e,
-              "nearest",
-              { intersect: true },
-              true
-            );
-            if (points.length) {
-              const firstPoint = points[0];
-              var label = e.chart.data.labels[firstPoint.index];
-            }
-            this.addVote(label);
-          },
+
+          
         },
       });
     },
@@ -283,13 +232,9 @@ export default {
       this.$socket.emit("voteSendServer", { label: e, id: id });
       this.isButtonDisabled = true;
     },
-    newChartSetData(){
-      this.$socket.emit('newChartSendServer',{
-        id:Math.floor(Math.random() * Math.pow(10, 20)),
-        chartType:this.newChart[0].chartType,
-        chartTitle: this.newChart[0].chartTitle,
-        votingOptions: this.newChart[0].votingOptions,
-    })
+    newChartSetData() {
+      this.$socket.emit('newChartSendServer', 
+        this.newChart[0])
     },
     async createSurvey() {
       this.visibleLeft = false;
@@ -327,19 +272,7 @@ export default {
               beginAtZero: true,
             },
           },
-          onClick: (e) => {
-            var points = e.chart.getElementsAtEventForMode(
-              e,
-              "nearest",
-              { intersect: true },
-              true
-            );
-            if (points.length) {
-              const firstPoint = points[0];
-              var label = e.chart.data.labels[firstPoint.index];
-            }
-            this.addVote(label);
-          },
+          
         },
       });
     },

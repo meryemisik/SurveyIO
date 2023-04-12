@@ -85,11 +85,11 @@
     display: flex;
     /* gap: 20px; */
     justify-content: space-around;
-    padding-left: 30px;
     box-sizing: border-box;
 
     &-list {
       width: 100%;
+      text-align: center;
 
       button {
         margin-top: 10px;
@@ -104,29 +104,6 @@
           cursor: not-allowed;
         }
 
-        &:nth-child(1) {
-          background: rgba(255, 99, 132, 0.2);
-          border-color: rgb(255, 99, 132) !important;
-          color: rgb(255, 99, 132);
-        }
-
-        &:nth-child(2) {
-          background: rgba(255, 159, 64, 0.2);
-          border-color: rgb(255, 159, 64) !important;
-          color: rgb(255, 159, 64);
-        }
-
-        &:nth-child(3) {
-          background: rgba(153, 102, 255, 0.2);
-          border-color: rgb(153, 102, 255) !important;
-          color: rgb(153, 102, 255);
-        }
-
-        &:nth-child(4) {
-          background: rgba(75, 192, 192, 0.2);
-          border-color: rgb(75, 192, 192) !important;
-          color: rgb(75, 192, 192);
-        }
       }
     }
 

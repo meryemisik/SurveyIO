@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Dimensions} from 'react-native';
+import {Dimensions} from 'react-native';
 
 import {LineChart, BarChart, PieChart} from 'react-native-chart-kit';
 
@@ -24,14 +24,13 @@ function ChartType({title, labels, data, colors}: Props) {
         }}
         width={(Dimensions.get('window').width * 90) / 100} // from react-native
         height={220}
-        yAxisInterval={1} // optional, defaults to 1
         chartConfig={{
           backgroundColor: '#e26a00',
           backgroundGradientFrom: '#fb8c00',
           backgroundGradientTo: '#ffa726',
           decimalPlaces: 0, // optional, defaults to 2dp
           color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+          labelColor: (opacity = .5) => `rgba(255, 255, 255, ${opacity})`,
           style: {
             borderRadius: 16,
           },
@@ -48,7 +47,7 @@ function ChartType({title, labels, data, colors}: Props) {
         }}
       />
     );
-  } else if (title == 'polarArea') {
+  } else if (title == 'pie') {
     var chartData = [];
     labels.map((e, index) => {
       chartData.push({
@@ -100,15 +99,7 @@ function ChartType({title, labels, data, colors}: Props) {
         backgroundGradientTo: '#ffa726',
         decimalPlaces: 0, // optional, defaults to 2dp
         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-        style: {
-          borderRadius: 16,
-        },
-        propsForDots: {
-          r: '6',
-          strokeWidth: '2',
-          stroke: '#ffa726',
-        },
+        
       }}
       fromZero={true}
       style={{
