@@ -10,83 +10,78 @@ var PORT = process.env.PORT || 3002
 
 var userVote = [
     {
-        id:'deneme',
-        chartType:'bar',
+        id: 'deneme',
+        chartType: 'bar',
         chartTitle: "Bar Chart",
         votingOptions: [
             {
-                labelTitle: 'Meyro',
+                labelTitle: 'Option X',
+                voteCount: 1,
+                bgColor: "gray",
+                borderColor: "black"
+            },
+            {
+                labelTitle: 'Option Y',
+                voteCount: 1,
+                bgColor: "lightblue",
+                borderColor: "blue"
+            },
+            {
+                labelTitle: 'Option Z',
                 voteCount: 1,
                 bgColor: "pink",
-                borderColor:"pink"
+                borderColor: "red"
             },
-            {
-                labelTitle: 'Meyruş',
-                voteCount: 1,
-                bgColor: "blue",
-                borderColor:"blue"
-            },
-            {
-                labelTitle: 'Mery',
-                voteCount: 1,
-                bgColor: "red",
-                borderColor:"red"
-            },
-            {
-                labelTitle: 'Merr me',
-                voteCount: 1,
-                bgColor: "yellow",
-                borderColor:"yellow"
-            },
+
         ]
     },
     {
-        id:'deneme2',
-        chartType:'line',
+        id: 'deneme2',
+        chartType: 'line',
         chartTitle: "Line Chart",
         votingOptions: [
             {
-                labelTitle: 'Meyro',
+                labelTitle: 'Option 111',
                 voteCount: 1,
                 bgColor: "pink",
-                borderColor:"pink"
+                borderColor: "purple"
             },
             {
-                labelTitle: 'Meyruş',
+                labelTitle: 'Option 222',
                 voteCount: 1,
                 bgColor: "blue",
-                borderColor:"blue"
+                borderColor: "white"
             },
             {
-                labelTitle: 'Mery',
+                labelTitle: 'Option 333',
                 voteCount: 1,
                 bgColor: "red",
-                borderColor:"red"
+                borderColor: "white"
             },
             {
-                labelTitle: 'Merr me',
+                labelTitle: 'Option 444',
                 voteCount: 1,
                 bgColor: "yellow",
-                borderColor:"yellow"
+                borderColor: "orange"
             },
         ]
     },
     {
-        id:'deneme3',
-        chartType:'polarArea',
-        chartTitle: "PolarArea Chart ",
+        id: 'deneme3',
+        chartType: 'pie',
+        chartTitle: "Pie Chart ",
         votingOptions: [
             {
-                labelTitle: 'Meyroooo',
+                labelTitle: 'Option A',
                 voteCount: 1,
-                bgColor: "blue",
-                borderColor:"blue"
+                bgColor: "lightblue",
+                borderColor: "blue"
             },
             {
-                labelTitle: 'Meyruşki',
+                labelTitle: 'Option B',
                 voteCount: 1,
                 bgColor: "orange",
-                borderColor:"orange"
+                borderColor: "red"
             }
         ]
     },
@@ -104,15 +99,25 @@ io.on('connection', function (socket) {
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
     io.emit('dataSendFront', userVote)
     socket.on('newChartSendServer', function (e) {
-         userVote.push(e)
-         io.emit('dataSendFront', userVote)
+        console.log("new chart datası : ", e)
+
+        userVote.push({
+            ...e, id: `${Math.floor(
+                Math.random() * Math.pow(10, 20),
+            )}-${new Date().getTime()}`
+        })
+        io.emit('dataSendFront', userVote)
+        console.log("userVote : ", userVote)
     })
     socket.on('voteSendServer', function (e) {
         console.log('e', e)
-        var userVoteIndexNumber =userVote.findIndex(x => x.id == e.id)
-        var votingOptionIndexNumber = userVote[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
-        userVote[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
-         io.emit('dataSendFront', userVote)
+        if (!!e.label && !!e.id) {
+            var userVoteIndexNumber = userVote.findIndex(x => x.id == e.id)
+            var votingOptionIndexNumber = userVote[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
+            userVote[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
+            io.emit('dataSendFront', userVote)
+        }
+       
     })
 });
 http.listen(PORT, function () {

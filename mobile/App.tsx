@@ -12,10 +12,8 @@ const connectionConfig = {
 };
 
 const socket = Socket('http://localhost:3002', connectionConfig);
-import React, {useEffect} from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -24,71 +22,70 @@ import {
   View,
 } from 'react-native';
 
+import {Picker} from '@react-native-picker/picker';
+
 import {Button} from '@rneui/base';
+
+import {BottomSheet, Input} from '@rneui/themed';
+
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import ChartType from './components/ChartType';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <View>
-        <Text>Bezier Line Chart</Text>
-      </View>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [chartList, setChartList] = React.useState([]);
   const [activeChartID, setActiveChartID] = React.useState(null);
   const [currentChart, setCurrentChart] = React.useState(null);
+  const [isVisible, setIsVisible] = React.useState(false);
+  const newChartTitleInput = React.createRef();
+  const [selectedLanguage, setSelectedLanguage] = useState();
+
+  const [newChart, setNewChart] = React.useState([
+    {
+      chartType: 'bar',
+      chartTitle: 'Your Chart Title',
+      votingOptions: [
+        {
+          labelTitle: 'deneme1',
+          bgColor: 'rgb(69 106 225 / 50%)',
+          borderColor: 'rgb(69 106 225 / 100%)',
+          voteCount: 0,
+        },
+        {
+          labelTitle: 'deneme2',
+          bgColor: 'rgb(200 0 159 / 50%)',
+          borderColor: 'rgb(200 0 159 / 100%)',
+          voteCount: 0,
+        },
+      ],
+    },
+  ]);
 
   const setChart = id => {
-    if((id != null && activeChartID == null) || id != activeChartID){
+    if ((id != null && activeChartID == null) || id != activeChartID) {
       setActiveChartID(id);
     }
     var chartID = chartList.findIndex(x => x.id == id);
-    if(chartID >= 0){
-    var chartData = {
-      id: chartList[chartID].id,
-      chartType: chartList[chartID].chartType,
-      chartTitle: chartList[chartID].chartTitle,
-      labels: [],
-      voteCounts: [],
-      colors: [],
-    };
-    chartList[chartID].votingOptions.map(x => {
-      chartData.labels.push(x.labelTitle);
-      chartData.voteCounts.push(x.voteCount);
-      chartData.colors.push(x.color);
-    });
-    setCurrentChart(chartData);
+    if (chartID >= 0) {
+      var chartData = {
+        id: chartList[chartID].id,
+        chartType: chartList[chartID].chartType,
+        chartTitle: chartList[chartID].chartTitle,
+        labels: [],
+        voteCounts: [],
+        colors: [],
+        borderColors: [],
+      };
+      chartList[chartID].votingOptions.map(x => {
+        chartData.labels.push(x.labelTitle);
+        chartData.voteCounts.push(x.voteCount);
+        chartData.colors.push(x.bgColor);
+        chartData.borderColors.push(x.borderColor);
+      });
+      setCurrentChart(chartData);
     }
   };
 
@@ -100,7 +97,6 @@ function App(): JSX.Element {
   useEffect(() => {
     socket.on('dataSendFront', datas => {
       setChartList(datas);
-      
     });
   }, []);
 
@@ -113,7 +109,7 @@ function App(): JSX.Element {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
+    <SafeAreaProvider style={backgroundStyle}>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
@@ -122,53 +118,92 @@ function App(): JSX.Element {
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <View>
-          
           <View style={{padding: '5%'}}>
             {currentChart && (
               <>
                 <Text>{currentChart.chartTitle}</Text>
-                <ChartType title={currentChart.chartType} labels={currentChart.labels} data={currentChart.voteCounts} colors={currentChart.colors}/>
-               
+                <ChartType
+                  title={currentChart.chartType}
+                  labels={currentChart.labels}
+                  data={currentChart.voteCounts}
+                  colors={currentChart.colors}
+                />
+
                 <View>
                   {currentChart.labels.map((e, index) => (
-                    <Button title={e} key={index} onPress={() => addVote(e)} />
+                    <Button
+                      title={e}
+                      key={index}
+                      onPress={() => addVote(e)}
+                      style={{marginBottom: 5}}
+                      buttonStyle={{
+                        backgroundColor: currentChart.colors[index],borderColor:currentChart.borderColors[index],borderWidth:1
+                      }}
+                      titleStyle={{ color: currentChart.borderColors[index]}}
+                    />
                   ))}
                 </View>
               </>
             )}
           </View>
         </View>
+        <View>
+          <Button color="secondary" onPress={() => setIsVisible(true)}>
+            Create a survey
+          </Button>
+        </View>
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            padding: 10,
           }}>
           {chartList?.length > 0 &&
             chartList.map((e, index) => (
               <View key={index} style={{padding: '0 5%', display: 'flex'}}>
-                <Text key={index}>{e.chartTitle}</Text>
-                <Button title="Seç" onPress={() => setChart(e.id)} />
+                <Button
+                  title={e.chartTitle}
+                  onPress={() => setChart(e.id)}
+                  style={{marginBottom: 10}}
+                />
               </View>
             ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+      <BottomSheet modalProps={{}} isVisible={isVisible}>
+        <View
+          style={{
+            backgroundColor: '#fff',
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            padding: 10,
+          }}>
+          <Picker
+            selectedValue={selectedLanguage}
+            onValueChange={(itemValue, itemIndex) =>
+              setSelectedLanguage(itemValue)
+            }>
+            <Picker.Item label="Bar Chart" value="bar" />
+            <Picker.Item label="Line Chart" value="line" />
+            <Picker.Item label="Pie Chart" value="pie" />
+          </Picker>
+          
+          <Input
+            ref={newChartTitleInput}
+            placeholder={newChart[0].chartTitle || 'Chart Title Girin'}
+            value={newChart[0].chartTitle}
+            onChangeText={text => {
+              setNewChart([{...newChart[0], chartTitle: text}]);
+            }}
+          />
+          <Button color="error" onPress={() => setIsVisible(false)}>
+            İptal
+          </Button>
+        </View>
+      </BottomSheet>
+    </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-});
+const styles = StyleSheet.create({});
 
 export default App;
