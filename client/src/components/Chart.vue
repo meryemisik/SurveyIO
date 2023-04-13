@@ -46,7 +46,7 @@
             <Button icon="pi pi-trash" @click="deleteNewChartColumn(index)" v-show="newChart[0].votingOptions.length>2"/>
           </div>
           <Button @click="newCreateChartColumn()" label="Create New Column" />
-          <Button @click="newChartSetData()" label="Create Chart" />
+          <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
         </div>
       </div>
 
@@ -72,6 +72,7 @@ export default {
   },
   data() {
     return {
+      newChartSetDataVisible:true,
       newChartTitle: null,
       newChartLabelName: [],
       newChartColumnBgColor: [],
@@ -161,6 +162,12 @@ export default {
       this.getNewChartData();
     },
     changeChartTitle(e) {
+      if(e){
+        this.newChartSetDataVisible = false
+      }
+      else{
+        this.newChartSetDataVisible = true
+      }
       this.newChart[0].chartTitle = e
       this.createNewChart();
     },
