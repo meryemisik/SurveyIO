@@ -36,18 +36,17 @@
           <div class="label-columns-item">
             <InputText type="text" class="p-inputtext-sm" v-model="newChartTitle"
               @blur="changeChartTitle(newChartTitle)" />
-            <ColorPicker v-model="color" format="rgb" />
-            <i class="pi pi-check" v-show="addColumnVisible" @click="addColumnFunction"></i>
           </div>
 
           <label>Columns & Background</label>
           <div class="label-columns-item" v-for="(item, index) in newChart[0].votingOptions " :key="index">
-            <InputText type="text" class="p-inputtext-sm" @input="changeLabelName"
+            <InputText type="text" class="p-inputtext-sm" @blur="changeLabelName"
               v-model.trim="newChart[0].votingOptions[index].labelTitle" />
-            <ColorPicker v-model="color" format="rgb" />
-            <i class="pi pi-check" v-show="addColumnVisible" @click="addColumnFunction"></i>
+            <ColorPicker v-model="color[index]" format="rgb"/>
+            <Button icon="pi pi-trash" @click="deleteNewChartColumn(index)" v-show="newChart[0].votingOptions.length>2"/>
           </div>
-          <Button @click="newChartSetData()" />
+          <Button @click="newCreateChartColumn()" label="Create New Column" />
+          <Button @click="newChartSetData()" label="Create Chart" />
         </div>
       </div>
 
@@ -79,9 +78,7 @@ export default {
       newChartColumnBorderColor: [],
       newChartColumnScore: [],
       visibleColorPicker: false,
-      labelName: null,
-      addColumnVisible: false,
-      color: { r: 255, g: 0, b: 94 },
+      color: [{ r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255) },{ r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255) }],
       activeChartId: null,
       currentData: {
         chartTitle: "",
@@ -99,14 +96,14 @@ export default {
           votingOptions: [
             {
               labelTitle: "First Title",
-              bgColor: "rgb(69 106 225 / 50%)",
-              borderColor: "rgb(69 106 225 / 100%)",
+              bgColor: "",
+              borderColor: "",
               voteCount: 0
             },
             {
               labelTitle: "Second Title",
-              bgColor: "rgb(200 0 159 / 50%)",
-              borderColor: "rgb(200 0 159 / 100%)",
+              bgColor: "",
+              borderColor: "",
               voteCount: 0
             },
           ],
@@ -128,15 +125,26 @@ export default {
   },
 
   methods: {
-    addColumnFunction() {
+    deleteNewChartColumn(index){
+      this.newChart[0].votingOptions.splice(index,1)
+      this.color.splice(index,1)
+      this.getNewChartData()
+    },
+    newCreateChartColumn() {
       this.newChart[0].votingOptions.push({
-        labelTitle: this.labelName,
-        bgColor: `rgb(${this.color.r} ${this.color.g} ${this.color.b} / 50%)`,
-        borderColor: `rgb(${this.color.r} ${this.color.g} ${this.color.b} / 100%)`,
+        labelTitle: 'example name',
+         bgColor : "",
+         borderColor:"",
+         voteCount:0
       });
+      this.color.push({ r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255) })
       this.getNewChartData();
     },
     getNewChartData() {
+      this.color.map((x,index)=>{
+        this.newChart[0].votingOptions[index].bgColor = `rgb(${x.r} ${x.g} ${x.b} / 50%)`,
+        this.newChart[0].votingOptions[index].borderColor = `rgb(${x.r} ${x.g} ${x.b} / 100%)`
+      })
       this.newChartLabelName = [];
       this.newChartColumnBgColor = [];
       this.newChartColumnBorderColor = [];
@@ -150,10 +158,7 @@ export default {
       this.createNewChart();
     },
     changeLabelName() {
-      this.addColumnVisible = true;
-      if (!this.labelName) {
-        this.addColumnVisible = false;
-      }
+      this.getNewChartData();
     },
     changeChartTitle(e) {
       this.newChart[0].chartTitle = e
@@ -209,7 +214,7 @@ export default {
               label: this.currentData.chartTitle,
               data: Object.values(this.currentData.voteCounts),
               backgroundColor: this.currentData.colors,
-              borderColor: ["rgb(255, 99, 132)", "rgb(255, 159, 64)"],
+              borderColor: this.currentData.borderColors,
               borderWidth: 1,
             },
           ],
@@ -290,6 +295,10 @@ export default {
       }
     },
   },
+  watch: {
+    "color"(newValue) {
+      this.getNewChartData()
+    }}
 };
 </script>
 
