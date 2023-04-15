@@ -2,24 +2,38 @@
   max-height: 400px !important;
   width: 560px !important;
 }
-
+.p-button{
+  padding: 0 !important;
+}
+.deneme{
+ padding: 5px !important;
+}
 .dashboard {
   &-header {
-    background-image: linear-gradient(to right top, #d16ba5, #c777b9, #ba83ca, #aa8fd8, #9a9ae1, #8aa7ec, #79b3f4, #69bff8, #52cffe, #41dfff, #46eefa, #5ffbf1);
-    width: 100vw;
-    height: 100px;
+    width: 55%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   &-content {
     padding: 50px 0px;
     //width : clamp
-    background-color: #e2e2dc;
+    background-color: #dce1e182;
     width: 100vw;
-    height: calc(100vh - 100px);
+    height: 100vh;
 
     .p-card-title {
       padding: 10px 20px;
       text-transform: uppercase;
+    }
+    .p-card {
+      width: 55%;
+    }
+    .p-datatable-table{
+      margin:10px auto;
+      width: 55%;
     }
 
   }
@@ -29,7 +43,6 @@
     top: 30px;
     left: 30px;
     background: white;
-    height: calc(100vh - 60px);
     width: 15%;
     border-radius: 12px;
 
@@ -47,13 +60,14 @@
 
       &-delete {
         color: rgb(255, 99, 132) !important;
-
+padding: 0px !important;
+margin: 0 !important;
         &:focus {
           outline: 0 none;
           outline-offset: 0;
           box-shadow: none !important
         }
-
+        
         &.p-button.p-button-text:enabled:active {
           background: transparent;
           color: transparent;
@@ -61,17 +75,20 @@
         }
 
         &:enabled:hover {
-          background: rgba(255, 99, 132, 0.2) !important;
-          border-color: rgb(255, 99, 132) !important;
+          background: transparent !important;
+          border-color: transparent !important;
         }
 
       }
+      
+
+      
     }
   }
 }
 
 .chart {
-  padding: 20px;
+  padding :0 20px;
   margin: auto;
   width: 600px;
   aspect-ratio: auto;
@@ -150,7 +167,8 @@
     margin-left: 5px;
   }
 
-  // &-item {
-  //   background-color: pink;
-  // }
+  &-item {
+    display: flex;
+    align-items: center;
+  }
 }

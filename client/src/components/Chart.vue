@@ -1,15 +1,29 @@
 <template>
   <div class="dashboard">
-    <div class="dashboard-header"></div>
     <div class="dashboard-content mt-5">
+     <div class="dashboard-header">
+      <h2>{{ currentData.chartTitle }}</h2>
+      <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
+     </div>
       <Card class="chart mt-5">
-        <template #title> {{ currentData.chartTitle }} </template>
         <template #content>
           <div class="chart">
             <canvas ref="canvas" id="canvas"></canvas>
             <div class="chart-vote-button">
-              <div class="chart-vote-button-list" v-for="(item,index) in currentData.labels" :key="index">
-                <button v-if="currentData.labels != []" @click="addVote(item, currentData.id)" :style="{'background-color':currentData.colors[index], 'color':currentData.borderColors[index], 'border-color':currentData.borderColors[index]}">
+              <div
+                class="chart-vote-button-list"
+                v-for="(item, index) in currentData.labels"
+                :key="index"
+              >
+                <button
+                  v-if="currentData.labels != []"
+                  @click="addVote(item, currentData.id)"
+                  :style="{
+                    'background-color': currentData.colors[index],
+                    color: currentData.borderColors[index],
+                    'border-color': currentData.borderColors[index],
+                  }"
+                >
                   {{ item }}
                 </button>
               </div>
@@ -17,36 +31,109 @@
           </div>
         </template>
       </Card>
-    </div>
-    <div class="dashboard-list">
-      <h4 class="dashboard-list-header">Chart List</h4>
-      <div class="dashboard-list-item" v-for="item in dataChartList">
-        <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
-        <Button icon="pi pi-trash" class="p-button-text sidebar-list-item-delete" />
-      </div>
-      <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote" @click="createSurvey()" />
+      
+
+      <DataTable :value="dataChartList" tableStyle="min-width: 50rem" @row-click="clickDataListTableRow($event)">
+        <Column
+          field="chartTitle"
+          header="Chart Name"
+          sortable
+          style="width: 25%"
+          ></Column>
+        <Column
+          field="votingOption"
+          header="Total Voting"
+          sortable
+          style="width: 25%"
+        >
+        <template #body="slotProps">
+                    {{ totalVotingValue(slotProps) }}
+                </template>
+        </Column>
+        <Column
+          field="quantity"
+          header="Total Option"
+          sortable
+          style="width: 25%"
+        >
+          <template #body="slotProps">
+            {{ slotProps.data.votingOptions.length }}
+          </template></Column
+        >
+        <Column
+          field="quantity"
+          header="Create Date"
+          sortable
+          style="width: 25%"
+        ></Column>
+      </DataTable>
     </div>
 
-    <Dialog header="Add Survey" :visible.sync="addVoteModalVisible" class="sidebar-list-add-vote-modal">
+    <!-- <div class="dashboard-list">
+      <h4 class="dashboard-list-header">Chart List</h4>
+      <div class="dashboard-list-item" v-for="item in dataChartList">
+        {{ item.id }}
+        <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
+        <Button icon="pi pi-trash" class="p-button-text sidebar-list-item-delete deneme" />
+      </div>
+      <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
+    </div> -->
+
+    <Dialog
+      header="Add Survey"
+      :visible.sync="addVoteModalVisible"
+      class="sidebar-list-add-vote-modal"
+    >
       <div>
-        <Dropdown v-model="selectedChart" :options="charts" optionLabel="name" placeholder="Select Chart Type"
-          @change="changeChartType(selectedChart)" />
+        <Dropdown
+          v-model="selectedChart"
+          :options="charts"
+          optionLabel="name"
+          placeholder="Select Chart Type"
+          @change="changeChartType(selectedChart)"
+        />
         <div class="label-columns" v-if="selectedChart">
           <label>Chart Title</label>
           <div class="label-columns-item">
-            <InputText type="text" class="p-inputtext-sm" v-model="newChartTitle"
-              @blur="changeChartTitle(newChartTitle)" />
+            <InputText
+              type="text"
+              class="p-inputtext-sm"
+              v-model="newChartTitle"
+              @blur="changeChartTitle(newChartTitle)"
+            />
           </div>
 
           <label>Columns & Background</label>
-          <div class="label-columns-item" v-for="(item, index) in newChart[0].votingOptions " :key="index">
-            <InputText type="text" class="p-inputtext-sm" @blur="changeLabelName"
-              v-model.trim="newChart[0].votingOptions[index].labelTitle" />
-            <ColorPicker v-model="color[index]" format="rgb"/>
-            <Button icon="pi pi-trash" @click="deleteNewChartColumn(index)" v-show="newChart[0].votingOptions.length>2"/>
+          <div
+            class="label-columns-item"
+            v-for="(item, index) in newChart[0].votingOptions"
+            :key="index"
+          >
+            <InputText
+              type="text"
+              class="p-inputtext-sm"
+              @blur="changeLabelName(newChart[0].votingOptions)"
+              v-model.trim="newChart[0].votingOptions[index].labelTitle"
+            />
+            <ColorPicker v-model="color[index]" format="rgb" />
+            <Button
+              icon="pi pi-trash"
+              class="p-button-text sidebar-list-item-delete"
+              @click="deleteNewChartColumn(index)"
+              v-show="newChart[0].votingOptions.length > 2"
+            />
           </div>
-          <Button @click="newCreateChartColumn()" label="Create New Column" />
-          <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
+          <Button
+            @click="newCreateChartColumn()"
+            label="Create New Column"
+            class="deneme"
+          />
+          <Button
+            @click="newChartSetData()"
+            label="Create Chart"
+            :disabled="newChartSetDataVisible"
+            class="deneme"
+          />
         </div>
       </div>
 
@@ -79,7 +166,18 @@ export default {
       newChartColumnBorderColor: [],
       newChartColumnScore: [],
       visibleColorPicker: false,
-      color: [{ r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255) },{ r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255) }],
+      color: [
+        {
+          r: Math.floor(Math.random() * 255),
+          g: Math.floor(Math.random() * 255),
+          b: Math.floor(Math.random() * 255),
+        },
+        {
+          r: Math.floor(Math.random() * 255),
+          g: Math.floor(Math.random() * 255),
+          b: Math.floor(Math.random() * 255),
+        },
+      ],
       activeChartId: null,
       currentData: {
         chartTitle: "",
@@ -124,28 +222,50 @@ export default {
       ],
     };
   },
-
+  created() {
+    this.setChart("deneme");
+  },
   methods: {
-    deleteNewChartColumn(index){
-      this.newChart[0].votingOptions.splice(index,1)
-      this.color.splice(index,1)
-      this.getNewChartData()
+    clickDataListTableRow(e){
+      this.setChart(e.data.id)
+    },
+    totalVotingValue(e){
+      var totalVoting = 0;
+      e.data.votingOptions.map((x)=>{
+        
+        totalVoting += x.voteCount
+        
+      })
+      return totalVoting
+    },
+    deleteNewChartColumn(index) {
+      this.newChart[0].votingOptions.splice(index, 1);
+      this.color.splice(index, 1);
+      this.getNewChartData();
     },
     newCreateChartColumn() {
       this.newChart[0].votingOptions.push({
-        labelTitle: 'example name',
-         bgColor : "",
-         borderColor:"",
-         voteCount:0
+        labelTitle: "example name",
+        bgColor: "",
+        borderColor: "",
+        voteCount: 0,
       });
-      this.color.push({ r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255) })
+      this.color.push({
+        r: Math.floor(Math.random() * 255),
+        g: Math.floor(Math.random() * 255),
+        b: Math.floor(Math.random() * 255),
+      });
       this.getNewChartData();
     },
     getNewChartData() {
-      this.color.map((x,index)=>{
-        this.newChart[0].votingOptions[index].bgColor = `rgb(${x.r} ${x.g} ${x.b} / 50%)`,
-        this.newChart[0].votingOptions[index].borderColor = `rgb(${x.r} ${x.g} ${x.b} / 100%)`
-      })
+      this.color.map((x, index) => {
+        (this.newChart[0].votingOptions[
+          index
+        ].bgColor = `rgb(${x.r} ${x.g} ${x.b} / 50%)`),
+          (this.newChart[0].votingOptions[
+            index
+          ].borderColor = `rgb(${x.r} ${x.g} ${x.b} / 100%)`);
+      });
       this.newChartLabelName = [];
       this.newChartColumnBgColor = [];
       this.newChartColumnBorderColor = [];
@@ -154,21 +274,24 @@ export default {
         this.newChartLabelName.push(x.labelTitle);
         this.newChartColumnBgColor.push(x.bgColor);
         this.newChartColumnBorderColor.push(x.borderColor);
-        this.newChartColumnScore.push(1)
+        this.newChartColumnScore.push(1);
       });
       this.createNewChart();
     },
-    changeLabelName() {
+    changeLabelName(e) {
+      console.log("e", e);
+      e.map((x) => {
+        console.log("x", x);
+      });
       this.getNewChartData();
     },
     changeChartTitle(e) {
-      if(e){
-        this.newChartSetDataVisible = false
+      if (e) {
+        this.newChartSetDataVisible = false;
+      } else {
+        this.newChartSetDataVisible = true;
       }
-      else{
-        this.newChartSetDataVisible = true
-      }
-      this.newChart[0].chartTitle = e
+      this.newChart[0].chartTitle = e;
       this.createNewChart();
     },
     setChart(e) {
@@ -236,7 +359,7 @@ export default {
             },
           },
 
-          
+
         },
       });
     },
@@ -245,8 +368,7 @@ export default {
       this.isButtonDisabled = true;
     },
     newChartSetData() {
-      this.$socket.emit('newChartSendServer', 
-        this.newChart[0])
+      this.$socket.emit("newChartSendServer", this.newChart[0]);
     },
     async createSurvey() {
       this.visibleLeft = false;
@@ -284,7 +406,7 @@ export default {
               beginAtZero: true,
             },
           },
-          
+
         },
       });
     },
@@ -303,9 +425,10 @@ export default {
     },
   },
   watch: {
-    "color"(newValue) {
+    color(newValue) {
       this.getNewChartData()
-    }}
+    }
+  }
 };
 </script>
 

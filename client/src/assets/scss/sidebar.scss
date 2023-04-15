@@ -20,17 +20,18 @@
                 border-color: transparent;
             }
             &:enabled:hover {
-                background: rgba(255, 99, 132, 0.2) !important;
-                border-color: rgb(255, 99, 132) !important;
+                background: transparent !important;
+                border-color: transparent !important;
             }
 
         }
     }
 
     &-add-vote {
-        position: absolute !important;
-        bottom: 15px !important;
-        width: 18rem;
+        font-weight: bold;
+        border: none !important;
+        background-color:#468C51 !important;
+        padding: 5px 20px !important;
         border-radius: 12px;
         &-modal{
             width: 50%;
