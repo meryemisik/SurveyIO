@@ -93,24 +93,19 @@ app.get('/', function (req, res) {
 //siteye giriş yapan kullanıcının bilgisini alır
 //işlemler ve dinlemeler bunun içinde gerçekleşir
 io.on('connection', function (socket) {
-    console.log('yeni bir kullanıcı giriş yaptı.', socket.id)
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
     io.emit('dataSendFront', userVote)
     socket.on('newChartSendServer', function (e) {
-        console.log("new chart datası : ", e)
-
         userVote.push({
             ...e, id: `${Math.floor(
                 Math.random() * Math.pow(10, 20),
-            )}-${new Date().getTime()}`
+            )}-${new Date().getTime()}`, createdDate : new Date()
         })
         io.emit('dataSendFront', userVote)
-        console.log("userVote : ", userVote)
     })
     socket.on('voteSendServer', function (e) {
-        console.log('e', e)
         if (!!e.label && !!e.id) {
             var userVoteIndexNumber = userVote.findIndex(x => x.id == e.id)
             var votingOptionIndexNumber = userVote[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)

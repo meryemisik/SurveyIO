@@ -1,10 +1,14 @@
 <template>
   <div class="dashboard">
     <div class="dashboard-content mt-5">
-     <div class="dashboard-header">
-      <h2>{{ currentData.chartTitle }}</h2>
-      <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
-     </div>
+      <div class="dashboard-header">
+        <h2>{{ currentData.chartTitle }}</h2>
+        <Button
+          label="Create a Survey"
+          class="p-button-success sidebar-list-add-vote deneme"
+          @click="createSurvey()"
+        />
+      </div>
       <Card class="chart mt-5">
         <template #content>
           <div class="chart">
@@ -31,24 +35,27 @@
           </div>
         </template>
       </Card>
-      
 
-      <DataTable :value="dataChartList" tableStyle="min-width: 50rem" @row-click="clickDataListTableRow($event)">
+      <DataTable
+        :value="dataChartList"
+        tableStyle="min-width: 50rem"
+        @row-click="clickDataListTableRow($event)"
+      >
         <Column
           field="chartTitle"
           header="Chart Name"
           sortable
           style="width: 25%"
-          ></Column>
+        ></Column>
         <Column
           field="votingOption"
           header="Total Voting"
           sortable
           style="width: 25%"
         >
-        <template #body="slotProps">
-                    {{ totalVotingValue(slotProps) }}
-                </template>
+          <template #body="slotProps">
+            {{ totalVotingValue(slotProps) }}
+          </template>
         </Column>
         <Column
           field="quantity"
@@ -61,11 +68,15 @@
           </template></Column
         >
         <Column
-          field="quantity"
+          field="createdDate"
           header="Create Date"
           sortable
           style="width: 25%"
-        ></Column>
+        >
+        <template #body="slotProps">
+            {{ formatDate(slotProps) }}
+          </template>
+        </Column>
       </DataTable>
     </div>
 
@@ -153,13 +164,22 @@ export default {
       console.log("socket connected 2");
     },
     dataSendFront(data) {
+      console.log("data", data);
       this.dataChartList = data;
+      console.log(new Date());
+
+      if (this.dataChartList.length > 0 && this.activeChartId == null) {
+        this.activeChartId =
+          this.dataChartList[
+            Math.floor(Math.random() * this.dataChartList.length)
+          ].id;
+      }
       this.setChart(this.activeChartId);
     },
   },
   data() {
     return {
-      newChartSetDataVisible:true,
+      newChartSetDataVisible: true,
       newChartTitle: null,
       newChartLabelName: [],
       newChartColumnBgColor: [],
@@ -197,13 +217,13 @@ export default {
               labelTitle: "First Title",
               bgColor: "",
               borderColor: "",
-              voteCount: 0
+              voteCount: 0,
             },
             {
               labelTitle: "Second Title",
               bgColor: "",
               borderColor: "",
-              voteCount: 0
+              voteCount: 0,
             },
           ],
         },
@@ -222,21 +242,22 @@ export default {
       ],
     };
   },
-  created() {
-    this.setChart("deneme");
-  },
   methods: {
-    clickDataListTableRow(e){
-      this.setChart(e.data.id)
+    clickDataListTableRow(e) {
+      this.setChart(e.data.id);
     },
-    totalVotingValue(e){
+    totalVotingValue(e) {
       var totalVoting = 0;
-      e.data.votingOptions.map((x)=>{
+      e.data.votingOptions.map((x) => {
+        totalVoting += x.voteCount;
+      });
+      return totalVoting;
+    },
+    formatDate(e) {
+      if(e.data.createdDate){
+        console.log(e)
         
-        totalVoting += x.voteCount
-        
-      })
-      return totalVoting
+      }
     },
     deleteNewChartColumn(index) {
       this.newChart[0].votingOptions.splice(index, 1);
@@ -358,8 +379,6 @@ export default {
               beginAtZero: true,
             },
           },
-
-
         },
       });
     },
@@ -406,7 +425,6 @@ export default {
               beginAtZero: true,
             },
           },
-
         },
       });
     },
@@ -426,9 +444,9 @@ export default {
   },
   watch: {
     color(newValue) {
-      this.getNewChartData()
-    }
-  }
+      this.getNewChartData();
+    },
+  },
 };
 </script>
 
