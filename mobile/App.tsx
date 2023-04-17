@@ -13,6 +13,7 @@ const connectionConfig = {
 
 const socket = Socket('http://localhost:3002', connectionConfig);
 import React, {useEffect, useRef, useState} from 'react';
+
 import {
   ScrollView,
   StatusBar,
@@ -28,7 +29,12 @@ import {Button} from '@rneui/base';
 
 import {BottomSheet, Input} from '@rneui/themed';
 
+
+ import Slider from '@react-native-community/slider';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
+import ColorPicker, { Panel1, colorKit, HueSlider } from 'reanimated-color-picker';
+
+
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -42,6 +48,8 @@ function App(): JSX.Element {
   const [isVisible, setIsVisible] = React.useState(false);
   const newChartTitleInput = React.createRef();
   const [selectedLanguage, setSelectedLanguage] = useState();
+
+ 
 
   const [newChart, setNewChart] = React.useState([
     {
@@ -108,6 +116,16 @@ function App(): JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const createNewChart = () => {
+    socket.emit('newChartSendServer', newChart[0]);
+  };
+
+  const onSelectColor = ({ hex }) => {
+    // do something with the selected color.
+    console.log(hex);
+    console.log(colorKit.RGB(hex).object());
+  };
+
   return (
     <SafeAreaProvider style={backgroundStyle}>
       <StatusBar
@@ -137,15 +155,25 @@ function App(): JSX.Element {
                       onPress={() => addVote(e)}
                       style={{marginBottom: 5}}
                       buttonStyle={{
-                        backgroundColor: currentChart.colors[index],borderColor:currentChart.borderColors[index],borderWidth:1
+                        backgroundColor: currentChart.colors[index],
+                        borderColor: currentChart.borderColors[index],
+                        borderWidth: 1,
                       }}
-                      titleStyle={{ color: currentChart.borderColors[index]}}
+                      titleStyle={{color: currentChart.borderColors[index]}}
                     />
                   ))}
                 </View>
               </>
             )}
           </View>
+        </View>
+        <View>
+        <ColorPicker style={{ width: '70%' }} value='red' onComplete={onSelectColor}>
+          
+          <Panel1 />
+          <HueSlider />
+       
+        </ColorPicker>
         </View>
         <View>
           <Button color="secondary" onPress={() => setIsVisible(true)}>
@@ -186,7 +214,7 @@ function App(): JSX.Element {
             <Picker.Item label="Line Chart" value="line" />
             <Picker.Item label="Pie Chart" value="pie" />
           </Picker>
-          
+
           <Input
             ref={newChartTitleInput}
             placeholder={newChart[0].chartTitle || 'Chart Title Girin'}
@@ -195,6 +223,27 @@ function App(): JSX.Element {
               setNewChart([{...newChart[0], chartTitle: text}]);
             }}
           />
+
+          {newChart[0].votingOptions.map((e, index) => (
+            <View key={index}>
+              <Input
+                placeholder={e.labelTitle || 'Column Label Girin'}
+                value={e.labelTitle}
+                onChangeText={text => {
+                  var votingOptionData = newChart[0].votingOptions;
+                  votingOptionData[index].labelTitle = text;
+                  setNewChart([
+                    {...newChart[0], votingOptions: [...votingOptionData]},
+                  ]);
+                }}
+              />
+            </View>
+          ))}
+
+          <Button color="success" onPress={() => createNewChart()}>
+            Oluştur
+          </Button>
+
           <Button color="error" onPress={() => setIsVisible(false)}>
             İptal
           </Button>
