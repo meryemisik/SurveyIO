@@ -1,13 +1,22 @@
 <template>
   <div class="dashboard">
-    <div class="dashboard-content mt-5">
-      <div class="dashboard-header">
-        <h2>{{ currentData.chartTitle }}</h2>
+    <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
+      <template #start class="dashboard-header">
+        <img alt="logo" src="../image/mat-vote-logo.png" class="mr-2 dashboard-header-logo" />
+      </template>
+      <template #end>
         <Button
           label="Create a Survey"
           class="p-button-success sidebar-list-add-vote deneme"
           @click="createSurvey()"
         />
+    </template>
+    </MegaMenu>
+
+    <div class="dashboard-content mt-5">
+      <div class="dashboard-chart-header">
+        <h2>{{ currentData.chartTitle }}</h2>
+        <small class="dashboard-chart-header-date">{{ formatDate(currentData.createdDate) }}</small>
       </div>
       <Card class="chart mt-5">
         <template #content>
@@ -73,22 +82,12 @@
           sortable
           style="width: 25%"
         >
-        <template #body="slotProps">
-            {{ formatDate(slotProps) }}
+          <template #body="slotProps">
+            {{ formatDate(slotProps.data.createdDate) }}
           </template>
         </Column>
       </DataTable>
     </div>
-
-    <!-- <div class="dashboard-list">
-      <h4 class="dashboard-list-header">Chart List</h4>
-      <div class="dashboard-list-item" v-for="item in dataChartList">
-        {{ item.id }}
-        <span @click="setChart(item.id)">{{ item.chartTitle }}</span>
-        <Button icon="pi pi-trash" class="p-button-text sidebar-list-item-delete deneme" />
-      </div>
-      <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
-    </div> -->
 
     <Dialog
       header="Add Survey"
@@ -157,6 +156,7 @@
 
 <script>
 import Chart from "chart.js/auto";
+import moment from 'moment'
 export default {
   name: "Chart",
   sockets: {
@@ -164,9 +164,7 @@ export default {
       console.log("socket connected 2");
     },
     dataSendFront(data) {
-      console.log("data", data);
       this.dataChartList = data;
-      console.log(new Date());
 
       if (this.dataChartList.length > 0 && this.activeChartId == null) {
         this.activeChartId =
@@ -207,6 +205,7 @@ export default {
         voteCounts: [],
         colors: [],
         borderColors: [],
+        createdDate:null
       },
       newChart: [
         {
@@ -253,11 +252,8 @@ export default {
       });
       return totalVoting;
     },
-    formatDate(e) {
-      if(e.data.createdDate){
-        console.log(e)
-        
-      }
+    formatDate(value) {
+        return moment(value).format(`DD.MM.YYYY`)
     },
     deleteNewChartColumn(index) {
       this.newChart[0].votingOptions.splice(index, 1);
@@ -339,6 +335,7 @@ export default {
           voteCounts: [],
           colors: [],
           borderColors: [],
+          createdDate:obj.createdDate
         };
         if (obj) {
           obj.votingOptions.map((y) => {

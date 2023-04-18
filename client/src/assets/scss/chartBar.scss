@@ -9,20 +9,33 @@
  padding: 5px !important;
 }
 .dashboard {
-  &-header {
+  &-header{
+    &-logo{
+      height: 70px;
+    }
+    &-megamenu{
+      display: flex;
+    align-items: center;
+    justify-content: space-between;
+    }
+  }
+  &-chart-header {
     width: 55%;
     margin: auto;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 20px;
+    &-date{
+      opacity: .5;
+    }
   }
 
   &-content {
-    padding: 50px 0px;
     //width : clamp
     background-color: #dce1e182;
     width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 70px);
 
     .p-card-title {
       padding: 10px 20px;

@@ -13,6 +13,7 @@ var userVote = [
         id: 'deneme',
         chartType: 'bar',
         chartTitle: "Bar Chart",
+        createdDate:'Tue May 12 2023 20:00:01 GMT+0300 (GMT+03:00)',
         votingOptions: [
             {
                 labelTitle: 'Option X',
@@ -39,6 +40,7 @@ var userVote = [
         id: 'deneme2',
         chartType: 'line',
         chartTitle: "Line Chart",
+        createdDate:'Tue Jun 11 2023 12:00:01 GMT+0300 (GMT+03:00)',
         votingOptions: [
             {
                 labelTitle: 'Option 111',
@@ -70,6 +72,7 @@ var userVote = [
         id: 'deneme3',
         chartType: 'pie',
         chartTitle: "Pie Chart ",
+        createdDate:'Tue Jun 15 2023 12:00:01 GMT+0300 (GMT+03:00)',
         votingOptions: [
             {
                 labelTitle: 'Option A',
