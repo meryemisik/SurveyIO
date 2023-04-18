@@ -19,6 +19,7 @@ import Card from 'primevue/card';
 import ColorPicker from 'primevue/colorpicker';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import MegaMenu from 'primevue/megamenu';
 
 Vue.use(PrimeVue);
 Vue.config.productionTip = false
@@ -33,6 +34,7 @@ Vue.component('Card', Card);
 Vue.component('DataTable', DataTable);
 Vue.component('Column', Column);
 Vue.component('ColorPicker', ColorPicker);
+Vue.component('MegaMenu', MegaMenu);
 
 const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
 
