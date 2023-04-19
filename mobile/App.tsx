@@ -25,16 +25,16 @@ import {
 
 import {Picker} from '@react-native-picker/picker';
 
-import {Button} from '@rneui/base';
+import {Button, Overlay, Badge} from '@rneui/base';
 
 import {BottomSheet, Input} from '@rneui/themed';
 
-
- import Slider from '@react-native-community/slider';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import ColorPicker, { Panel1, colorKit, HueSlider } from 'reanimated-color-picker';
-
-
+import ColorPicker, {
+  Panel1,
+  colorKit,
+  HueSlider,
+} from 'reanimated-color-picker';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
@@ -49,7 +49,24 @@ function App(): JSX.Element {
   const newChartTitleInput = React.createRef();
   const [selectedLanguage, setSelectedLanguage] = useState();
 
- 
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const toggleOverlay = (index = null) => {
+   
+    if (!!index) {
+      console.log('çalıştı modal : ', index);
+    }
+console.log("wedfsdaf" , newChart[0].votingOptions)
+    setModalVisible(!modalVisible);
+  };
+
+  useEffect(() => {
+    if (modalVisible) {
+      setIsVisible(false);
+    } else {
+      setIsVisible(true);
+    }
+  }, [modalVisible]);
 
   const [newChart, setNewChart] = React.useState([
     {
@@ -58,14 +75,14 @@ function App(): JSX.Element {
       votingOptions: [
         {
           labelTitle: 'deneme1',
-          bgColor: 'rgb(69 106 225 / 50%)',
-          borderColor: 'rgb(69 106 225 / 100%)',
+          bgColor: 'rgba(69 106 225 / .5)',
+          borderColor: 'rgba(69 106 225 / 1)',
           voteCount: 0,
         },
         {
           labelTitle: 'deneme2',
-          bgColor: 'rgb(200 0 159 / 50%)',
-          borderColor: 'rgb(200 0 159 / 100%)',
+          bgColor: 'rgba(200 0 159 / .5)',
+          borderColor: 'rgba(200 0 159 / 1)',
           voteCount: 0,
         },
       ],
@@ -120,7 +137,7 @@ function App(): JSX.Element {
     socket.emit('newChartSendServer', newChart[0]);
   };
 
-  const onSelectColor = ({ hex }) => {
+  const onSelectColor = ({hex}) => {
     // do something with the selected color.
     console.log(hex);
     console.log(colorKit.RGB(hex).object());
@@ -167,14 +184,7 @@ function App(): JSX.Element {
             )}
           </View>
         </View>
-        <View>
-        <ColorPicker style={{ width: '70%' }} value='red' onComplete={onSelectColor}>
-          
-          <Panel1 />
-          <HueSlider />
-       
-        </ColorPicker>
-        </View>
+        <View></View>
         <View>
           <Button color="secondary" onPress={() => setIsVisible(true)}>
             Create a survey
@@ -197,6 +207,7 @@ function App(): JSX.Element {
             ))}
         </View>
       </ScrollView>
+
       <BottomSheet modalProps={{}} isVisible={isVisible}>
         <View
           style={{
@@ -237,6 +248,11 @@ function App(): JSX.Element {
                   ]);
                 }}
               />
+              <Badge
+                containerStyle={{position: 'absolute', top: -4, right: -4}}
+                badgeStyle={{width: 20, height: 20, backgroundColor: e.bgColor, borderColor: e.borderColor}}
+                onPress={() => toggleOverlay(index)}
+              />
             </View>
           ))}
 
@@ -249,6 +265,25 @@ function App(): JSX.Element {
           </Button>
         </View>
       </BottomSheet>
+      <Overlay
+        overlayStyle={{width: '80%'}}
+        isVisible={modalVisible}
+        onBackdropPress={() => toggleOverlay(null)}>
+        <View>
+          <ColorPicker
+            style={{width: '100%'}}
+            value="red"
+            onComplete={onSelectColor}>
+            <Panel1 />
+            <HueSlider />
+          </ColorPicker>
+          <Button
+            title="Onayla"
+            onPress={() => toggleOverlay(null)}
+            style={{marginBottom: 10, marginTop: 20}}
+          />
+        </View>
+      </Overlay>
     </SafeAreaProvider>
   );
 }
