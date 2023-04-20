@@ -49,40 +49,54 @@ function App(): JSX.Element {
   const newChartTitleInput = React.createRef();
   const [selectedLanguage, setSelectedLanguage] = useState();
 
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(null);
+  const [activeLabelIndex, setActiveLabelIndex] = useState(null);
+
+  const isNumeric = value => {
+    return /^\d+$/.test(value);
+  };
 
   const toggleOverlay = (index = null) => {
-   
-    if (!!index) {
-      console.log('çalıştı modal : ', index);
+    if (isNumeric(index)) {
+      setActiveLabelIndex(index);
     }
-console.log("wedfsdaf" , newChart[0].votingOptions)
+
     setModalVisible(!modalVisible);
   };
 
   useEffect(() => {
-    if (modalVisible) {
-      setIsVisible(false);
-    } else {
-      setIsVisible(true);
+    if (modalVisible != null) {
+      if (modalVisible) {
+        setIsVisible(false);
+      } else {
+        setIsVisible(true);
+      }
     }
   }, [modalVisible]);
 
   const [newChart, setNewChart] = React.useState([
     {
       chartType: 'bar',
-      chartTitle: 'Your Chart Title',
+      chartTitle: 'Your Survey Title',
       votingOptions: [
         {
-          labelTitle: 'deneme1',
-          bgColor: 'rgba(69 106 225 / .5)',
-          borderColor: 'rgba(69 106 225 / 1)',
+          labelTitle: 'Column Label 1',
+          bgColor: `rgba(${Math.floor(Math.random() * 255)} ${Math.floor(
+            Math.random() * 255,
+          )} ${Math.floor(Math.random() * 255)} / .3)`,
+          borderColor: `rgba(${Math.floor(Math.random() * 255)} ${Math.floor(
+            Math.random() * 255,
+          )} ${Math.floor(Math.random() * 255)} / 1)`,
           voteCount: 0,
         },
         {
-          labelTitle: 'deneme2',
-          bgColor: 'rgba(200 0 159 / .5)',
-          borderColor: 'rgba(200 0 159 / 1)',
+          labelTitle: 'Column Label 2',
+          bgColor: `rgba(${Math.floor(Math.random() * 255)} ${Math.floor(
+            Math.random() * 255,
+          )} ${Math.floor(Math.random() * 255)} / .3)`,
+          borderColor: `rgba(${Math.floor(Math.random() * 255)} ${Math.floor(
+            Math.random() * 255,
+          )} ${Math.floor(Math.random() * 255)} / 1)`,
           voteCount: 0,
         },
       ],
@@ -99,6 +113,7 @@ console.log("wedfsdaf" , newChart[0].votingOptions)
         id: chartList[chartID].id,
         chartType: chartList[chartID].chartType,
         chartTitle: chartList[chartID].chartTitle,
+        createdDate: chartList[chartID].createdDate,
         labels: [],
         voteCounts: [],
         colors: [],
@@ -140,7 +155,16 @@ console.log("wedfsdaf" , newChart[0].votingOptions)
   const onSelectColor = ({hex}) => {
     // do something with the selected color.
     console.log(hex);
-    console.log(colorKit.RGB(hex).object());
+    var setColor = colorKit.RGB(hex).object();
+
+    var votingOptionData = newChart[0].votingOptions;
+    votingOptionData[
+      activeLabelIndex
+    ].bgColor = `rgba(${setColor.r} ${setColor.g} ${setColor.b} / .3)`;
+    votingOptionData[
+      activeLabelIndex
+    ].borderColor = `rgba(${setColor.r} ${setColor.g} ${setColor.b} / 1)`;
+    setNewChart([{...newChart[0], votingOptions: [...votingOptionData]}]);
   };
 
   return (
@@ -156,7 +180,13 @@ console.log("wedfsdaf" , newChart[0].votingOptions)
           <View style={{padding: '5%'}}>
             {currentChart && (
               <>
-                <Text>{currentChart.chartTitle}</Text>
+                <Text>
+                  {currentChart.chartTitle} (
+                  {`${new Date(currentChart.createdDate).getDate()}.${
+                    new Date(currentChart.createdDate).getMonth() + 1
+                  }.${new Date(currentChart.createdDate).getFullYear()}`}
+                  )
+                </Text>
                 <ChartType
                   title={currentChart.chartType}
                   labels={currentChart.labels}
@@ -218,9 +248,10 @@ console.log("wedfsdaf" , newChart[0].votingOptions)
           }}>
           <Picker
             selectedValue={selectedLanguage}
-            onValueChange={(itemValue, itemIndex) =>
-              setSelectedLanguage(itemValue)
-            }>
+            onValueChange={(itemValue, itemIndex) => {
+              setNewChart([{...newChart[0], chartType: itemValue}]);
+              setSelectedLanguage(itemValue);
+            }}>
             <Picker.Item label="Bar Chart" value="bar" />
             <Picker.Item label="Line Chart" value="line" />
             <Picker.Item label="Pie Chart" value="pie" />
@@ -248,9 +279,15 @@ console.log("wedfsdaf" , newChart[0].votingOptions)
                   ]);
                 }}
               />
+
               <Badge
                 containerStyle={{position: 'absolute', top: -4, right: -4}}
-                badgeStyle={{width: 20, height: 20, backgroundColor: e.bgColor, borderColor: e.borderColor}}
+                badgeStyle={{
+                  width: 20,
+                  height: 20,
+                  backgroundColor: e.bgColor,
+                  borderColor: e.borderColor,
+                }}
                 onPress={() => toggleOverlay(index)}
               />
             </View>
