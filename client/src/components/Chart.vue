@@ -178,7 +178,7 @@ export default {
   data() {
     return {
       newChartSetDataVisible: true,
-      newChartTitle: null,
+      newChartTitle: 'Your Survey Title',
       newChartLabelName: [],
       newChartColumnBgColor: [],
       newChartColumnBorderColor: [],
@@ -278,10 +278,10 @@ export default {
       this.color.map((x, index) => {
         (this.newChart[0].votingOptions[
           index
-        ].bgColor = `rgb(${x.r} ${x.g} ${x.b} / 50%)`),
+        ].bgColor = `rgba(${x.r} ${x.g} ${x.b} / .3)`),
           (this.newChart[0].votingOptions[
             index
-          ].borderColor = `rgb(${x.r} ${x.g} ${x.b} / 100%)`);
+          ].borderColor = `rgba(${x.r} ${x.g} ${x.b} / 1)`);
       });
       this.newChartLabelName = [];
       this.newChartColumnBgColor = [];
@@ -406,7 +406,7 @@ export default {
             {
               label: this.newChartTitle
                 ? this.newChartTitle
-                : "Your Vote Title",
+                : "Your Survey Title",
               data: this.newChartColumnScore,
               backgroundColor: this.newChartColumnBgColor,
               borderColor: this.newChartColumnBorderColor,
