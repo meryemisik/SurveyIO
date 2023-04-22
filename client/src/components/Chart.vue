@@ -47,6 +47,7 @@
 
       <DataTable
         :value="dataChartList"
+        resizableRows columnResizeMode="fit"  
         tableStyle="min-width: 50rem"
         @row-click="clickDataListTableRow($event)"
       >

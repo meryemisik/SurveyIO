@@ -9,6 +9,7 @@
  padding: 5px !important;
 }
 .dashboard {
+  min-width: 100%;
   &-header{
     &-logo{
       height: 70px;
@@ -20,8 +21,8 @@
     }
   }
   &-chart-header {
-    width: 55%;
-    margin: auto;
+    // width: 100%;
+    // margin: auto;
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -34,19 +35,18 @@
   &-content {
     //width : clamp
     background-color: #dce1e182;
-    width: 100vw;
     height: calc(100vh - 70px);
 
     .p-card-title {
       padding: 10px 20px;
       text-transform: uppercase;
     }
-    .p-card {
-      width: 55%;
-    }
+    // .p-card {
+    //   width: 100%;
+    // }
     .p-datatable-table{
       margin:10px auto;
-      width: 55%;
+      min-width: 100%;
     }
 
   }
