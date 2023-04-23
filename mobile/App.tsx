@@ -27,7 +27,7 @@ import {Picker} from '@react-native-picker/picker';
 
 import {Button, Overlay, Badge} from '@rneui/base';
 
-import {BottomSheet, Input} from '@rneui/themed';
+import {BottomSheet, Input, Icon} from '@rneui/themed';
 
 import {SafeAreaProvider} from 'react-native-safe-area-context';
 import ColorPicker, {
@@ -167,6 +167,27 @@ function App(): JSX.Element {
     setNewChart([{...newChart[0], votingOptions: [...votingOptionData]}]);
   };
 
+  const deleteNewChartColumn = index => {
+    var votingOptionData = newChart[0].votingOptions;
+    votingOptionData.splice(index, 1);
+    setNewChart([{...newChart[0], votingOptions: [...votingOptionData]}]);
+  };
+
+  const addNewChartColumn = () => {
+    var votingOptionData = newChart[0].votingOptions;
+    votingOptionData.push({
+      labelTitle: 'Column Label',
+      bgColor: `rgba(${Math.floor(Math.random() * 255)} ${Math.floor(
+        Math.random() * 255,
+      )} ${Math.floor(Math.random() * 255)} / .3)`,
+      borderColor: `rgba(${Math.floor(Math.random() * 255)} ${Math.floor(
+        Math.random() * 255,
+      )} ${Math.floor(Math.random() * 255)} / 1)`,
+      voteCount: 0,
+    });
+    setNewChart([{...newChart[0], votingOptions: [...votingOptionData]}]);
+  };
+
   return (
     <SafeAreaProvider style={backgroundStyle}>
       <StatusBar
@@ -246,6 +267,7 @@ function App(): JSX.Element {
             borderTopRightRadius: 20,
             padding: 10,
           }}>
+          <Text>Select Chart Type</Text>
           <Picker
             selectedValue={selectedLanguage}
             onValueChange={(itemValue, itemIndex) => {
@@ -281,7 +303,7 @@ function App(): JSX.Element {
               />
 
               <Badge
-                containerStyle={{position: 'absolute', top: -4, right: -4}}
+                containerStyle={{position: 'absolute', top: 4, right: 30}}
                 badgeStyle={{
                   width: 20,
                   height: 20,
@@ -290,16 +312,36 @@ function App(): JSX.Element {
                 }}
                 onPress={() => toggleOverlay(index)}
               />
+
+              {newChart[0].votingOptions.length > 1 && (
+                <Badge
+                  containerStyle={{position: 'absolute', top: 4, right: -4}}
+                  value="Sil"
+                  status="error"
+                  onPress={() => deleteNewChartColumn(index)}
+                />
+              )}
             </View>
           ))}
 
-          <Button color="success" onPress={() => createNewChart()}>
-            Oluştur
-          </Button>
+          <Badge
+            containerStyle={{marginEnd: 'auto', marginBottom: 10}}
+            value="Add a Column"
+            status="primary"
+            onPress={() => addNewChartColumn()}
+          />
 
-          <Button color="error" onPress={() => setIsVisible(false)}>
-            İptal
-          </Button>
+          <Button
+            title="Oluştur"
+            color="success"
+            onPress={() => createNewChart()}
+          />
+
+          <Button
+            title="İptal"
+            color="error"
+            onPress={() => setIsVisible(false)}
+          />
         </View>
       </BottomSheet>
       <Overlay
