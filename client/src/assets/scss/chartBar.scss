@@ -1,51 +1,81 @@
+body {
+  background-color: #dce1e182;
+}
+
 #canvas {
   max-height: 400px !important;
   width: 560px !important;
 }
-.p-button{
+
+.p-button {
   padding: 0 !important;
 }
-.deneme{
- padding: 5px !important;
+
+.deneme {
+  padding: 5px !important;
 }
+
 .dashboard {
+
   min-width: 100%;
-  &-header{
-    &-logo{
+
+  &-header {
+    &-logo {
       height: 70px;
     }
-    &-megamenu{
+
+    &-megamenu {
       display: flex;
-    align-items: center;
-    justify-content: space-between;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1;
     }
   }
-  &-chart-header {
-    // width: 100%;
-    // margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 20px;
-    &-date{
-      opacity: .5;
+
+  &-chart {
+    &-header {
+      // width: 100%;
+      // margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 20px;
+
+      &-date {
+        opacity: .5;
+      }
+    }
+
+    &-table {
+      .p-datatable-tbody {
+        tr {
+          cursor: pointer;
+        }
+      }
     }
   }
 
   &-content {
+    margin: auto;
+    width: clamp(280px, 90%, 800px);
+    padding-top: 90px;
     //width : clamp
-    background-color: #dce1e182;
+
     height: calc(100vh - 70px);
 
     .p-card-title {
       padding: 10px 20px;
       text-transform: uppercase;
     }
+
     // .p-card {
     //   width: 100%;
     // }
-    .p-datatable-table{
-      margin:10px auto;
+    .p-datatable-table {
+      margin: 10px auto;
       min-width: 100%;
     }
 
@@ -73,14 +103,15 @@
 
       &-delete {
         color: rgb(255, 99, 132) !important;
-padding: 0px !important;
-margin: 0 !important;
+        padding: 0px !important;
+        margin: 0 !important;
+
         &:focus {
           outline: 0 none;
           outline-offset: 0;
           box-shadow: none !important
         }
-        
+
         &.p-button.p-button-text:enabled:active {
           background: transparent;
           color: transparent;
@@ -93,32 +124,38 @@ margin: 0 !important;
         }
 
       }
-      
 
-      
+
+
     }
   }
 }
 
 .chart {
-  padding :0 20px;
+  padding: 0 20px;
   margin: auto;
-  width: 600px;
+  width: 100%;
+  overflow: auto;
   aspect-ratio: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
+  #canvas {
+    max-width: 100%;
+    min-width: clamp(280px, 100%, 600px);
+  }
+
   &-vote-button {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
     /* gap: 20px; */
-    justify-content: space-around;
+    justify-content: space-between;
     box-sizing: border-box;
 
     &-list {
-      width: 100%;
       text-align: center;
 
       button {
@@ -151,6 +188,7 @@ margin: 0 !important;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
   }
 
 
@@ -174,7 +212,8 @@ margin: 0 !important;
     padding: 3px !important;
     border-radius: 4px;
   }
-  .p-colorpicker-preview{
+
+  .p-colorpicker-preview {
     height: 20px !important;
     width: 20px !important;
     margin-left: 5px;
@@ -183,5 +222,31 @@ margin: 0 !important;
   &-item {
     display: flex;
     align-items: center;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .label-columns {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex-direction: column;
+    margin-top: 10px;
+
+    .p-inputtext {
+      padding: 3px !important;
+      border-radius: 4px;
+    }
+
+    .p-colorpicker-preview {
+      height: 20px !important;
+      width: 20px !important;
+      margin-left: 5px;
+    }
+
+    &-item {
+      display: flex;
+      align-items: center;
+    }
   }
 }

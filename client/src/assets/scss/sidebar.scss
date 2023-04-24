@@ -7,18 +7,22 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        &-delete{
+
+        &-delete {
             color: rgb(255, 99, 132) !important;
+
             &:focus {
                 outline: 0 none;
                 outline-offset: 0;
                 box-shadow: none !important
             }
+
             &.p-button.p-button-text:enabled:active {
                 background: transparent;
                 color: transparent;
                 border-color: transparent;
             }
+
             &:enabled:hover {
                 background: transparent !important;
                 border-color: transparent !important;
@@ -30,18 +34,31 @@
     &-add-vote {
         font-weight: bold;
         border: none !important;
-        background-color:#468C51 !important;
+        background-color: #468C51 !important;
         padding: 5px 20px !important;
         border-radius: 12px;
-        &-modal{
-            width: 50%;
-            .p-dialog-content{
-                height: 400px;
+
+        &-modal {
+            width: clamp(350px, 90%, 600px);
+
+            .p-dialog-content {
                 display: flex !important;
                 align-items: flex-start !important;
                 justify-content: space-between;
+                flex-direction: column;
             }
-           
+
+            @media only screen and (max-width: 684px) {
+                &-item {
+                    display: flex;
+                    justify-content: space-between;
+                    width: 100%;
+                }
+
+            }
+
+
+
         }
     }
 }

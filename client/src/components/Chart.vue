@@ -2,7 +2,11 @@
   <div class="dashboard">
     <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
       <template #start class="dashboard-header">
-        <img alt="logo" src="../image/mat-vote-logo.png" class="mr-2 dashboard-header-logo" />
+        <img
+          alt="logo"
+          src="../image/mat-vote-logo.png"
+          class="mr-2 dashboard-header-logo"
+        />
       </template>
       <template #end>
         <Button
@@ -10,15 +14,17 @@
           class="p-button-success sidebar-list-add-vote deneme"
           @click="createSurvey()"
         />
-    </template>
+      </template>
     </MegaMenu>
 
-    <div class="dashboard-content mt-5">
+    <div class="dashboard-content">
       <div class="dashboard-chart-header">
         <h2>{{ currentData.chartTitle }}</h2>
-        <small class="dashboard-chart-header-date">{{ formatDate(currentData.createdDate) }}</small>
+        <small class="dashboard-chart-header-date">{{
+          formatDate(currentData.createdDate)
+        }}</small>
       </div>
-      <Card class="chart mt-5">
+      <Card class="chart">
         <template #content>
           <div class="chart">
             <canvas ref="canvas" id="canvas"></canvas>
@@ -46,10 +52,13 @@
       </Card>
 
       <DataTable
+        scrollable
         :value="dataChartList"
-        resizableRows columnResizeMode="fit"  
+        resizableRows
+        columnResizeMode="fit"
         tableStyle="min-width: 50rem"
         @row-click="clickDataListTableRow($event)"
+        class="dashboard-chart-table"
       >
         <Column
           field="chartTitle"
@@ -95,15 +104,15 @@
       :visible.sync="addVoteModalVisible"
       class="sidebar-list-add-vote-modal"
     >
-      <div>
-        <Dropdown
-          v-model="selectedChart"
-          :options="charts"
-          optionLabel="name"
-          placeholder="Select Chart Type"
-          @change="changeChartType(selectedChart)"
-        />
+      <div class="sidebar-list-add-vote-modal-item">
         <div class="label-columns" v-if="selectedChart">
+          <Dropdown
+            v-model="selectedChart"
+            :options="charts"
+            optionLabel="name"
+            placeholder="Select Chart Type"
+            @change="changeChartType(selectedChart)"
+          />
           <label>Chart Title</label>
           <div class="label-columns-item">
             <InputText
@@ -113,7 +122,9 @@
               @blur="changeChartTitle(newChartTitle)"
             />
           </div>
+        </div>
 
+        <div class="label-columns" v-if="selectedChart">
           <label>Columns & Background</label>
           <div
             class="label-columns-item"
@@ -157,7 +168,7 @@
 
 <script>
 import Chart from "chart.js/auto";
-import moment from 'moment'
+import moment from "moment";
 export default {
   name: "Chart",
   sockets: {
@@ -179,7 +190,7 @@ export default {
   data() {
     return {
       newChartSetDataVisible: true,
-      newChartTitle: 'Your Survey Title',
+      newChartTitle: "Your Survey Title",
       newChartLabelName: [],
       newChartColumnBgColor: [],
       newChartColumnBorderColor: [],
@@ -206,7 +217,7 @@ export default {
         voteCounts: [],
         colors: [],
         borderColors: [],
-        createdDate:null
+        createdDate: null,
       },
       newChart: [
         {
@@ -254,7 +265,7 @@ export default {
       return totalVoting;
     },
     formatDate(value) {
-        return moment(value).format(`DD.MM.YYYY`)
+      return moment(value).format(`DD.MM.YYYY`);
     },
     deleteNewChartColumn(index) {
       this.newChart[0].votingOptions.splice(index, 1);
@@ -336,7 +347,7 @@ export default {
           voteCounts: [],
           colors: [],
           borderColors: [],
-          createdDate:obj.createdDate
+          createdDate: obj.createdDate,
         };
         if (obj) {
           obj.votingOptions.map((y) => {
