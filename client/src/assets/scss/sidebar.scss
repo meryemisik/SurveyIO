@@ -48,14 +48,23 @@
                 flex-direction: column;
             }
 
-            @media only screen and (max-width: 684px) {
-                &-item {
-                    display: flex;
-                    justify-content: space-between;
-                    width: 100%;
-                }
+            &-item {
+                width: 100%;
 
+                .p-dropdown {
+                    width: 100%;
+                    padding: 4px;
+                }
             }
+
+            // @media only screen and (max-width: 684px) {
+            //     &-item {
+            //         display: flex;
+            //         justify-content: space-between;
+            //         width: 100%;
+            //     }
+
+            // }
 
 
 
