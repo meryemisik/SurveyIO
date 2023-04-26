@@ -8,12 +8,12 @@ var io = require('socket.io')(http, {
 var PORT = process.env.PORT || 3002
 
 
-var userVote = [
+var surveyList = [
     {
         id: 'deneme',
         chartType: 'bar',
         chartTitle: "Bar Chart",
-        createdDate:'Tue May 12 2023 20:00:01 GMT+0300 (GMT+03:00)',
+        createdDate: 'Tue May 12 2023 20:00:01 GMT+0300 (GMT+03:00)',
         votingOptions: [
             {
                 labelTitle: 'Option X',
@@ -40,7 +40,7 @@ var userVote = [
         id: 'deneme2',
         chartType: 'line',
         chartTitle: "Line Chart",
-        createdDate:'Tue Jun 11 2023 12:00:01 GMT+0300 (GMT+03:00)',
+        createdDate: 'Tue Jun 11 2023 12:00:01 GMT+0300 (GMT+03:00)',
         votingOptions: [
             {
                 labelTitle: 'Option 111',
@@ -72,7 +72,7 @@ var userVote = [
         id: 'deneme3',
         chartType: 'pie',
         chartTitle: "Pie Chart ",
-        createdDate:'Tue Jun 15 2023 12:00:01 GMT+0300 (GMT+03:00)',
+        createdDate: 'Tue Jun 15 2023 12:00:01 GMT+0300 (GMT+03:00)',
         votingOptions: [
             {
                 labelTitle: 'Option A',
@@ -89,7 +89,18 @@ var userVote = [
         ]
     },
 ]
-
+var userVote = [
+    {
+        userId:'05541693820',
+        surveyId: 'deneme',
+        selectedOption: 'Option X',
+    },
+    {
+        userId:'05541693823',
+        surveyId: 'deneme3',
+        selectedOption: 'Option A',
+    }
+]
 app.get('/', function (req, res) {
     res.send()
 })
@@ -99,23 +110,31 @@ io.on('connection', function (socket) {
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
-    io.emit('dataSendFront', userVote)
+    io.emit('dataSendFront', surveyList)
+    io.emit('userVoteSendFront',userVote)
+    socket.on('newUserVote', function (e) {
+        userVote.push(e)
+        io.emit('userVoteSendFront',userVote)
+console.log('userVote',userVote)
+    })
     socket.on('newChartSendServer', function (e) {
-        userVote.push({
+        surveyList.push({
             ...e, id: `${Math.floor(
                 Math.random() * Math.pow(10, 20),
-            )}-${new Date().getTime()}`, createdDate : new Date()
+            )}-${new Date().getTime()}`, createdDate: new Date()
         })
-        io.emit('dataSendFront', userVote)
+        io.emit('dataSendFront', surveyList)
+
     })
     socket.on('voteSendServer', function (e) {
         if (!!e.label && !!e.id) {
-            var userVoteIndexNumber = userVote.findIndex(x => x.id == e.id)
-            var votingOptionIndexNumber = userVote[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
-            userVote[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
-            io.emit('dataSendFront', userVote)
+            var userVoteIndexNumber = surveyList.findIndex(x => x.id == e.id)
+            var votingOptionIndexNumber = surveyList[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
+            surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
+            io.emit('dataSendFront', surveyList)
+            io.emit('userVoteSendFront',userVote)
         }
-       
+
     })
 });
 http.listen(PORT, function () {
