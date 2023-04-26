@@ -35,6 +35,7 @@
                 :key="index"
               >
                 <button
+                :disabled="disableVoteButton"
                   v-if="currentData.labels != []"
                   @click="addVote(item, currentData.id)"
                   :style="{
@@ -195,9 +196,15 @@ export default {
       }
       this.setChart(this.activeChartId);
     },
+    userVoteSendFront(data){
+      this.userVoteDataList = data
+      this.setChart(this.activeChartId);
+    }
   },
   data() {
     return {
+      userVoteDataList:[],
+      disableVoteButton:false,
       newChartSetDataVisible: true,
       newChartTitle: "Your Survey Title",
       newChartLabelName: [],
@@ -334,6 +341,12 @@ export default {
     },
     setChart(e) {
       if (e) {
+        this.disableVoteButton = false
+        this.userVoteDataList.filter(x => e == x.surveyId).map((x)=>{
+        if(x.userId == localStorage.getItem('phone')){
+          this.disableVoteButton = true
+        }
+      })
         this.activeChartId = e;
         var currentChart = {};
         this.dataChartList.findIndex(checkChart);
@@ -402,7 +415,7 @@ export default {
     },
     addVote(e, id) {
       this.$socket.emit("voteSendServer", { label: e, id: id });
-      this.isButtonDisabled = true;
+      this.$socket.emit("newUserVote", { selectedOption: e, surveyId: id, userId:'05541693820' })
     },
     newChartSetData() {
       this.$socket.emit("newChartSendServer", this.newChart[0]);
