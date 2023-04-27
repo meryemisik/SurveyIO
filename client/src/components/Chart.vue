@@ -2,18 +2,10 @@
   <div class="dashboard">
     <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
       <template #start class="dashboard-header">
-        <img
-          alt="logo"
-          src="../image/mat-vote-logo.png"
-          class="mr-2 dashboard-header-logo"
-        />
+        <img alt="logo" src="../image/mat-vote-logo.png" class="mr-2 dashboard-header-logo" />
       </template>
       <template #end>
-        <Button
-          label="Create a Survey"
-          class="p-button-success sidebar-list-add-vote deneme"
-          @click="createSurvey()"
-        />
+        <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
       </template>
     </MegaMenu>
 
@@ -29,21 +21,15 @@
           <div class="chart">
             <canvas ref="canvas" id="canvas"></canvas>
             <div class="chart-vote-button">
-              <div
-                class="chart-vote-button-list"
-                v-for="(item, index) in currentData.labels"
-                :key="index"
-              >
-                <button
-                :disabled="disableVoteButton"
-                  v-if="currentData.labels != []"
-                  @click="addVote(item, currentData.id)"
+              <div class="chart-vote-button-list" v-for="(item, index) in currentData.labels" :key="index">
+
+                <button :class="{ 'selected-vote': selectedUserVoteData == item }"
+                  :disabled="disableVoteButton" v-if="currentData.labels != []" @click="addVote(item, currentData.id)"
                   :style="{
                     'background-color': currentData.colors[index],
                     color: currentData.borderColors[index],
                     'border-color': currentData.borderColors[index],
-                  }"
-                >
+                  }">
                   {{ item }}
                 </button>
               </div>
@@ -52,47 +38,20 @@
         </template>
       </Card>
 
-      <DataTable
-        scrollable
-        :value="dataChartList"
-        resizableRows
-        columnResizeMode="fit"
-        tableStyle="min-width: 50rem"
-        @row-click="clickDataListTableRow($event)"
-        class="dashboard-chart-table"
-      >
-        <Column
-          field="chartTitle"
-          header="Chart Name"
-          sortable
-          style="width: 25%"
-        ></Column>
-        <Column
-          field="votingOption"
-          header="Total Voting"
-          sortable
-          style="width: 25%"
-        >
+      <DataTable scrollable :value="dataChartList" resizableRows columnResizeMode="fit" tableStyle="min-width: 50rem"
+        @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
+        <Column field="chartTitle" header="Chart Name" sortable style="width: 25%"></Column>
+        <Column field="votingOption" header="Total Voting" sortable style="width: 25%">
           <template #body="slotProps">
             {{ totalVotingValue(slotProps) }}
           </template>
         </Column>
-        <Column
-          field="quantity"
-          header="Total Option"
-          sortable
-          style="width: 25%"
-        >
+        <Column field="quantity" header="Total Option" sortable style="width: 25%">
           <template #body="slotProps">
             {{ slotProps.data.votingOptions.length }}
-          </template></Column
-        >
-        <Column
-          field="createdDate"
-          header="Create Date"
-          sortable
-          style="width: 25%"
-        >
+          </template>
+        </Column>
+        <Column field="createdDate" header="Create Date" sortable style="width: 25%">
           <template #body="slotProps">
             {{ formatDate(slotProps.data.createdDate) }}
           </template>
@@ -100,32 +59,19 @@
       </DataTable>
     </div>
 
-    <Dialog
-      header="Add Survey"
-      :visible.sync="addVoteModalVisible"
-      class="sidebar-list-add-vote-modal"
-    >
+    <Dialog header="Add Survey" :visible.sync="addVoteModalVisible" class="sidebar-list-add-vote-modal">
       <div class="sidebar-list-add-vote-modal-item">
         <div class="label-columns" v-if="selectedChart">
           <div class="label-columns-item">
             <label>Chart Type</label>
-            <Dropdown
-              v-model="selectedChart"
-              :options="charts"
-              optionLabel="name"
-              placeholder="Select Chart Type"
-              @change="changeChartType(selectedChart)"
-            />
+            <Dropdown v-model="selectedChart" :options="charts" optionLabel="name" placeholder="Select Chart Type"
+              @change="changeChartType(selectedChart)" />
           </div>
           <div class="chart-title">
             <label>Chart Title</label>
             <div class="chart-title-item">
-              <InputText
-                type="text"
-                class="p-inputtext-sm chart-title-item-input"
-                v-model="newChartTitle"
-                @blur="changeChartTitle(newChartTitle)"
-              />
+              <InputText type="text" class="p-inputtext-sm chart-title-item-input" v-model="newChartTitle"
+                @blur="changeChartTitle(newChartTitle)" />
             </div>
           </div>
         </div>
@@ -133,38 +79,17 @@
         <div class="" v-if="selectedChart">
           <label>Columns & Background</label>
           <div class="columns-option">
-            <div
-              class="columns-option-item"
-              v-for="(item, index) in newChart[0].votingOptions"
-              :key="index"
-            >
-              <InputText
-                type="text"
-                class="p-inputtext-sm"
-                @blur="changeLabelName(newChart[0].votingOptions)"
-                v-model.trim="newChart[0].votingOptions[index].labelTitle"
-              />
+            <div class="columns-option-item" v-for="(item, index) in newChart[0].votingOptions" :key="index">
+              <InputText type="text" class="p-inputtext-sm" @blur="changeLabelName(newChart[0].votingOptions)"
+                v-model.trim="newChart[0].votingOptions[index].labelTitle" />
               <ColorPicker v-model="color[index]" format="rgb" />
-              <Button
-                icon="pi pi-trash"
-                class="p-button-text sidebar-list-item-delete"
-                @click="deleteNewChartColumn(index)"
-                v-show="newChart[0].votingOptions.length > 2"
-              />
+              <Button icon="pi pi-trash" class="p-button-text sidebar-list-item-delete"
+                @click="deleteNewChartColumn(index)" v-show="newChart[0].votingOptions.length > 2" />
             </div>
           </div>
           <div class="columns-button">
-            <Button
-              @click="newCreateChartColumn()"
-              label="Create New Column"
-              class="deneme"
-            />
-            <Button
-              @click="newChartSetData()"
-              label="Create Chart"
-              :disabled="newChartSetDataVisible"
-              class="deneme"
-            />
+            <Button @click="newCreateChartColumn()" label="Create New Column" class="deneme" />
+            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" class="deneme" />
           </div>
         </div>
       </div>
@@ -186,7 +111,7 @@ export default {
       console.log("socket connected 2");
     },
     dataSendFront(data) {
-      this.dataChartList = data;
+      this.dataChartList = data.surveyList;
 
       if (this.dataChartList.length > 0 && this.activeChartId == null) {
         this.activeChartId =
@@ -194,17 +119,21 @@ export default {
             Math.floor(Math.random() * this.dataChartList.length)
           ].id;
       }
+
+      this.userVoteDataList = data.userVote
       this.setChart(this.activeChartId);
     },
-    userVoteSendFront(data){
-      this.userVoteDataList = data
-      this.setChart(this.activeChartId);
-    }
+  },
+  created() {
+    document.title = "Vote App | MAT"
+    // that is for set phone number localstorage
+    //localStorage.setItem('phone', "05541693820")
   },
   data() {
     return {
-      userVoteDataList:[],
-      disableVoteButton:false,
+      selectedUserVoteData: null,
+      userVoteDataList: [],
+      disableVoteButton: false,
       newChartSetDataVisible: true,
       newChartTitle: "Your Survey Title",
       newChartLabelName: [],
@@ -324,9 +253,9 @@ export default {
       this.createNewChart();
     },
     changeLabelName(e) {
-      console.log("e", e);
+      //console.log("e", e);
       e.map((x) => {
-        console.log("x", x);
+        //console.log("x", x);
       });
       this.getNewChartData();
     },
@@ -342,11 +271,12 @@ export default {
     setChart(e) {
       if (e) {
         this.disableVoteButton = false
-        this.userVoteDataList.filter(x => e == x.surveyId).map((x)=>{
-        if(x.userId == localStorage.getItem('phone')){
-          this.disableVoteButton = true
-        }
-      })
+        this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
+          if (x.userId == localStorage.getItem('phone')) {
+            this.disableVoteButton = true
+            this.selectedUserVoteData = x.selectedOption
+          }
+        })
         this.activeChartId = e;
         var currentChart = {};
         this.dataChartList.findIndex(checkChart);
@@ -414,8 +344,9 @@ export default {
       });
     },
     addVote(e, id) {
-      this.$socket.emit("voteSendServer", { label: e, id: id });
-      this.$socket.emit("newUserVote", { selectedOption: e, surveyId: id, userId:'05541693820' })
+      if (e != this.selectedUserVoteData) {
+        this.$socket.emit("voteSendServer", { label: e, id: id, userId: '05541693820' });
+      }
     },
     newChartSetData() {
       this.$socket.emit("newChartSendServer", this.newChart[0]);

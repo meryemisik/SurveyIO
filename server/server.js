@@ -91,12 +91,12 @@ var surveyList = [
 ]
 var userVote = [
     {
-        userId:'05541693820',
+        userId: '05541693820',
         surveyId: 'deneme',
         selectedOption: 'Option X',
     },
     {
-        userId:'05541693823',
+        userId: '05541693823',
         surveyId: 'deneme3',
         selectedOption: 'Option A',
     }
@@ -110,20 +110,14 @@ io.on('connection', function (socket) {
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
-    io.emit('dataSendFront', surveyList)
-    io.emit('userVoteSendFront',userVote)
-    socket.on('newUserVote', function (e) {
-        userVote.push(e)
-        io.emit('userVoteSendFront',userVote)
-console.log('userVote',userVote)
-    })
+    io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
     socket.on('newChartSendServer', function (e) {
         surveyList.push({
             ...e, id: `${Math.floor(
                 Math.random() * Math.pow(10, 20),
             )}-${new Date().getTime()}`, createdDate: new Date()
         })
-        io.emit('dataSendFront', surveyList)
+        io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
 
     })
     socket.on('voteSendServer', function (e) {
@@ -131,8 +125,8 @@ console.log('userVote',userVote)
             var userVoteIndexNumber = surveyList.findIndex(x => x.id == e.id)
             var votingOptionIndexNumber = surveyList[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
             surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
-            io.emit('dataSendFront', surveyList)
-            io.emit('userVoteSendFront',userVote)
+            userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
+            io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
         }
 
     })

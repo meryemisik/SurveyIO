@@ -210,9 +210,20 @@ label {
         border-style: solid;
         cursor: pointer;
 
+       
+
         &:disabled {
-          opacity: 0.5;
+          border-color: #ECECEC !important;
+          background-color: gray !important;
+          color: #000 !important;
+          opacity: .3;
           cursor: not-allowed;
+
+          &.selected-vote{
+            opacity: .5 !important;
+            background-color: green !important;
+            color: #FFF !important;
+          }
         }
 
       }
