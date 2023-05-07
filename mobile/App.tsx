@@ -43,6 +43,7 @@ import ChartType from './components/ChartType';
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [chartList, setChartList] = React.useState([]);
+  const [userVoteDataList, setUserVoteDataList] = React.useState([]);
   const [activeChartID, setActiveChartID] = React.useState(null);
   const [currentChart, setCurrentChart] = React.useState(null);
   const [isVisible, setIsVisible] = React.useState(false);
@@ -51,6 +52,8 @@ function App(): JSX.Element {
 
   const [modalVisible, setModalVisible] = useState(null);
   const [activeLabelIndex, setActiveLabelIndex] = useState(null);
+  const [userPhoneNumber, setUserPhoneNumber] = useState(null);
+  const [disableVoteButton, setDisableVoteButton] = useState(false);
 
   const isNumeric = value => {
     return /^\d+$/.test(value);
@@ -103,7 +106,28 @@ function App(): JSX.Element {
     },
   ]);
 
+  useEffect(() => {
+    disabledVoteButtonsCheck()
+  }, [currentChart]);
+
+  const disabledVoteButtonsCheck = () => {
+    if (!!currentChart) {
+      setDisableVoteButton(false);
+      if (!!userPhoneNumber) {
+        userVoteDataList
+          .filter(x => currentChart.id == x.surveyId)
+          .map(x => {
+            if (x.userId == userPhoneNumber) {
+              setDisableVoteButton(true);
+              //this.selectedUserVoteData = x.selectedOption
+            }
+          });
+      }
+    }
+  };
+
   const setChart = id => {
+    disabledVoteButtonsCheck();
     if ((id != null && activeChartID == null) || id != activeChartID) {
       setActiveChartID(id);
     }
@@ -130,13 +154,20 @@ function App(): JSX.Element {
   };
 
   const addVote = label => {
-    socket.emit('voteSendServer', {label: label, id: activeChartID});
+    socket.emit('voteSendServer', {
+      label: label,
+      id: activeChartID,
+      userId: userPhoneNumber,
+    });
     setChart(activeChartID);
   };
 
   useEffect(() => {
     socket.on('dataSendFront', datas => {
-      setChartList(datas);
+      setChartList(datas.surveyList);
+      setUserVoteDataList(datas.userVote);
+      setUserPhoneNumber(datas.userPhone);
+      disabledVoteButtonsCheck();
     });
   }, []);
 
@@ -154,7 +185,6 @@ function App(): JSX.Element {
 
   const onSelectColor = ({hex}) => {
     // do something with the selected color.
-    console.log(hex);
     var setColor = colorKit.RGB(hex).object();
 
     var votingOptionData = newChart[0].votingOptions;
@@ -220,6 +250,7 @@ function App(): JSX.Element {
                     <Button
                       title={e}
                       key={index}
+                      disabled={disableVoteButton}
                       onPress={() => addVote(e)}
                       style={{marginBottom: 5}}
                       buttonStyle={{
