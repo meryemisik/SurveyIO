@@ -23,9 +23,8 @@
             <div class="chart-vote-button">
               <div class="chart-vote-button-list" v-for="(item, index) in currentData.labels" :key="index">
 
-                <button :class="{ 'selected-vote': selectedUserVoteData == item }"
-                  :disabled="disableVoteButton" v-if="currentData.labels != []" @click="addVote(item, currentData.id)"
-                  :style="{
+                <button :class="{ 'selected-vote': selectedUserVoteData == item }" :disabled="disableVoteButton"
+                  v-if="currentData.labels != []" @click="addVote(item, currentData.id)" :style="{
                     'background-color': currentData.colors[index],
                     color: currentData.borderColors[index],
                     'border-color': currentData.borderColors[index],
@@ -121,6 +120,7 @@ export default {
       }
 
       this.userVoteDataList = data.userVote
+      this.userPhone = data.userPhone
       this.setChart(this.activeChartId);
     },
   },
@@ -131,6 +131,7 @@ export default {
   },
   data() {
     return {
+      userPhone: null,
       selectedUserVoteData: null,
       userVoteDataList: [],
       disableVoteButton: false,
@@ -271,12 +272,16 @@ export default {
     setChart(e) {
       if (e) {
         this.disableVoteButton = false
-        this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
-          if (x.userId == localStorage.getItem('phone')) {
-            this.disableVoteButton = true
-            this.selectedUserVoteData = x.selectedOption
-          }
-        })
+        if (!!this.userPhone) {
+          console.log("buraya geldikkk")
+          this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
+            console.log("x : ", x)
+            if (x.userId == this.userPhone) {
+              this.disableVoteButton = true
+              this.selectedUserVoteData = x.selectedOption
+            }
+          })
+        }
         this.activeChartId = e;
         var currentChart = {};
         this.dataChartList.findIndex(checkChart);
@@ -345,7 +350,7 @@ export default {
     },
     addVote(e, id) {
       if (e != this.selectedUserVoteData) {
-        this.$socket.emit("voteSendServer", { label: e, id: id, userId: '05541693820' });
+        this.$socket.emit("voteSendServer", { label: e, id: id, userId: this.userPhone });
       }
     },
     newChartSetData() {

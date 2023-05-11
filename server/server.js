@@ -110,15 +110,14 @@ io.on('connection', function (socket) {
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
-    io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
+    io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
     socket.on('newChartSendServer', function (e) {
         surveyList.push({
             ...e, id: `${Math.floor(
                 Math.random() * Math.pow(10, 20),
             )}-${new Date().getTime()}`, createdDate: new Date()
         })
-        io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
-
+        io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote , userPhone: '05372997045'})
     })
     socket.on('voteSendServer', function (e) {
         if (!!e.label && !!e.id) {
@@ -126,7 +125,7 @@ io.on('connection', function (socket) {
             var votingOptionIndexNumber = surveyList[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
             surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
             userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
-            io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
+            io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
         }
 
     })
