@@ -107,7 +107,7 @@ function App(): JSX.Element {
   ]);
 
   useEffect(() => {
-    disabledVoteButtonsCheck()
+    disabledVoteButtonsCheck();
   }, [currentChart]);
 
   const disabledVoteButtonsCheck = () => {
@@ -252,12 +252,16 @@ function App(): JSX.Element {
                       key={index}
                       disabled={disableVoteButton}
                       onPress={() => addVote(e)}
-                      style={{marginBottom: 5}}
-                      buttonStyle={{
-                        backgroundColor: currentChart.colors[index],
-                        borderColor: currentChart.borderColors[index],
-                        borderWidth: 1,
-                      }}
+                      style={userVoteDataList.filter(x => currentChart.id == x.surveyId && e == x.selectedOption).length > 0 ?
+                        {marginBottom: 5, borderWidth: 2, borderColor: 'blue'} :
+                        {marginBottom: 5}}
+                      buttonStyle={
+                        !disableVoteButton && {
+                          backgroundColor: currentChart.colors[index],
+                          borderColor: currentChart.borderColors[index],
+                          borderWidth: 1,
+                        }
+                      }
                       titleStyle={{color: currentChart.borderColors[index]}}
                     />
                   ))}
@@ -344,10 +348,10 @@ function App(): JSX.Element {
                 onPress={() => toggleOverlay(index)}
               />
 
-              {newChart[0].votingOptions.length > 1 && (
+              {newChart[0].votingOptions.length > 2 && (
                 <Badge
                   containerStyle={{position: 'absolute', top: 4, right: -4}}
-                  value="Sil"
+                  value="Del"
                   status="error"
                   onPress={() => deleteNewChartColumn(index)}
                 />
@@ -363,13 +367,14 @@ function App(): JSX.Element {
           />
 
           <Button
-            title="Oluştur"
+            title="Submit Survey"
             color="success"
+            style={{marginBottom: 5}}
             onPress={() => createNewChart()}
           />
 
           <Button
-            title="İptal"
+            title="Cancel"
             color="error"
             onPress={() => setIsVisible(false)}
           />
