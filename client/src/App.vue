@@ -1,24 +1,13 @@
 <template>
   <div id="app">
-    <Chart />
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/login">Login</router-link>
+    </nav>
+    <router-view/>
   </div>
 </template>
 
-<script>
-import Chart from "./components/Chart.vue";
-export default {
-  name: "App",
-  components: {
-    Chart,
-  },
-  data() {
-    return {
-    };
-  },
-  methods: {
-  },
-};
-</script>
 
 <style>
 body{

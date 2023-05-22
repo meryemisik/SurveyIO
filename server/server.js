@@ -110,7 +110,7 @@ app.get('/', function (req, res) {
 const test = async () => {
     const querySnapshot = await getDocs(collection(db, "user"));
     querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`);
+        console.log(`${doc.id} => ${doc.data()['Phone']}`);
     });
 }
 //siteye giriş yapan kullanıcının bilgisini alır
