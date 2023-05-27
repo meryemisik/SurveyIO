@@ -31,7 +31,7 @@ Projeyi kendi localinizde çalıştırabilmek için öncelikle bulunduğu dizine
 - [x] Yeni anket oluşturma
 - [x] Kişisel renklendirme ve istenilen seçenekleri ekleme
 - [ ] Verilen kod ile gizli anketlere ulaşma
-- [ ] Telefon numarası ile kayıt/giriş yapma
+- [x] Telefon numarası ile kayıt/giriş yapma
 - [ ] Telefon numarasına göre kullanıcıların oluşturduğu anketleri görme
 
 # Demo Linkleri

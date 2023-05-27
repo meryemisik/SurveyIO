@@ -1,5 +1,11 @@
-const { initializeApp, firebase } = require("firebase/app");
-const { doc, setDoc, getFirestore, collection, getDocs, query, orderBy } = require("firebase/firestore");
+const { initializeApp } = require("firebase/app");
+const { getAuth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  updateEmail,
+  updateProfile,
+  signOut
+} = require("firebase/auth");
 
 const firebaseConfig = {
   apiKey: "AIzaSyCsRWt3e5ZsgaLDybCAolXgR8rRFrTxV_M",
@@ -11,7 +17,11 @@ const firebaseConfig = {
   measurementId: "G-0HMKP9GRYL"
 };
 const appx = initializeApp(firebaseConfig);
-const db = getFirestore(appx);
+const auth = getAuth(appx);
 
-module.exports = {db, getFirestore, collection, 
-getDocs, doc, setDoc, query, orderBy}
+auth.languageCode = "tr";
+
+module.exports = {
+  auth, RecaptchaVerifier, signInWithPhoneNumber,
+  updateEmail, updateProfile, signOut
+}

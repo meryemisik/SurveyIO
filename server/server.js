@@ -139,6 +139,10 @@ io.on('connection', function (socket) {
         }
 
     })
+
+    socket.on('userlogin', function(e) {
+        console.log("burada data firebasede (users) kontrol edilecek ve içinde yoksa kaydedillecek : ", e)
+    })
 });
 http.listen(PORT, function () {
     console.log(` server ${PORT} çalıştı`)

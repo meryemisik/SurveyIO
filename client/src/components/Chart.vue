@@ -5,7 +5,8 @@
         <img alt="logo" src="../image/mat-vote-logo.png" class="mr-2 dashboard-header-logo" />
       </template>
       <template #end>
-        <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
+        <Button label="Create a Survey" class="p-button-success sidebar-list-btn" @click="createSurvey()" />
+        <Button label="Çıkış" class="p-button-danger sidebar-list-btn" @click="logout()" />
       </template>
     </MegaMenu>
 
@@ -16,6 +17,7 @@
           formatDate(currentData.createdDate)
         }}</small>
       </div>
+      <div style="color: red" v-if="waitingServer">Bekleyiniz, Bağlanıyor...</div>
       <Card class="chart">
         <template #content>
           <div class="chart">
@@ -87,8 +89,8 @@
             </div>
           </div>
           <div class="columns-button">
-            <Button @click="newCreateChartColumn()" label="Create New Column" class="deneme" />
-            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" class="deneme" />
+            <Button @click="newCreateChartColumn()" label="Create New Column" />
+            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
           </div>
         </div>
       </div>
@@ -107,7 +109,10 @@ export default {
   name: "Chart",
   sockets: {
     connect: function () {
-      console.log("socket connected 2");
+      this.waitingServer = false
+    },
+    disconnect: function () {
+      this.waitingServer = true
     },
     dataSendFront(data) {
       this.dataChartList = data.surveyList;
@@ -126,11 +131,10 @@ export default {
   },
   created() {
     document.title = "Vote App | MAT"
-    // that is for set phone number localstorage
-    //localStorage.setItem('phone', "05541693820")
   },
   data() {
     return {
+      waitingServer: true,
       userPhone: null,
       selectedUserVoteData: null,
       userVoteDataList: [],
@@ -273,9 +277,7 @@ export default {
       if (e) {
         this.disableVoteButton = false
         if (!!this.userPhone) {
-          console.log("buraya geldikkk")
           this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
-            console.log("x : ", x)
             if (x.userId == this.userPhone) {
               this.disableVoteButton = true
               this.selectedUserVoteData = x.selectedOption
@@ -407,6 +409,9 @@ export default {
         this.newChart[0].chartType = e.type;
         this.createNewChart();
       }
+    },
+    logout() {
+      this.$store.dispatch('logout')
     },
   },
   watch: {

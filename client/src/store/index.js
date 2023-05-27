@@ -1,18 +1,33 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import router from '@/router'
 
 Vue.use(Vuex)
-
 export default new Vuex.Store({
+
   state: {
-    user: localStorage.getItem('user')
+    user: JSON.parse(localStorage.getItem('user')),
   },
   getters: {
   },
   mutations: {
+    setAuth(state, data) {
+      state.user = data
+    },
+    logout(state) {
+      state.user = null
+    }
   },
   actions: {
-    //login logout
+    setAuth(context, data) {
+      localStorage.setItem('user', JSON.stringify(data))
+      context.commit('setAuth', data)
+    },
+    logout(context) {
+      localStorage.removeItem('user')
+      context.commit('logout')
+      router.push("/login");
+    },
   },
   modules: {
   }
