@@ -7,9 +7,8 @@ var io = require('socket.io')(http, {
 })
 var PORT = process.env.PORT || 3002
 
-const { auth, db, RecaptchaVerifier, signInWithPhoneNumber,
-    updateEmail, updateProfile, signOut, getFirestore, collection,
-    getDocs, doc, setDoc, query, orderBy } = require("./firebase-config");
+const { db, getFirestore, collection,
+    getDocs, doc, setDoc, query, orderBy, where } = require("./firebase-config");
 
 var surveyList = [
     {
@@ -107,28 +106,81 @@ var userVote = [
 app.get('/', function (req, res) {
     res.send()
 })
-const test = async () => {
-    const querySnapshot = await getDocs(collection(db, "user"));
+const getAllSurveys = async () => {
+    const surveysCol = collection(db, "surveys");
+    const querySnapshot = await getDocs(surveysCol);
+
     querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()['Phone']}`);
+        console.log(`${doc.id} => ${doc.data()['name'].a}`);
     });
 }
+
+const getUserVotes = async () => {
+    const surveysCol = collection(db, "surveys");
+    const sorting = query(surveysCol, where("Phone", "==", "05372997045"));
+    const querySnapshot = await getDocs(sorting);
+
+    querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()['name'].a}`);
+    });
+}
+
+const saveUser = async (e) => {
+    setDoc(
+        doc(
+            db,
+            "users",
+            e.uid
+        ),
+        {
+            uid: e.uid,
+            phoneNumber: e.phoneNumber,
+        })
+}
+
+
+
+const createSurvey = async (e) => {
+    setDoc(
+        doc(
+            db,
+            "surveys",
+            e.id
+        ),
+        e)
+}
+
+
 //siteye giriş yapan kullanıcının bilgisini alır
 //işlemler ve dinlemeler bunun içinde gerçekleşir
 io.on('connection', function (socket) {
-    test()
+
+    if (surveyList.length == 0) {
+        getAllSurveys()
+    }
+    getUserVotes()
+
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
     io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
+
+
     socket.on('newChartSendServer', function (e) {
+        var newChartId = `${Math.floor(
+            Math.random() * Math.pow(10, 20),
+        )}-${new Date().getTime()}`;
+        var newChartDate = new Date()
         surveyList.push({
-            ...e, id: `${Math.floor(
-                Math.random() * Math.pow(10, 20),
-            )}-${new Date().getTime()}`, createdDate: new Date()
+            ...e, id: newChartId, createdDate: newChartDate
+        })
+        createSurvey({
+            ...e, id: newChartId, createdDate: newChartDate
         })
         io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
     })
+
+
     socket.on('voteSendServer', function (e) {
         if (!!e.label && !!e.id) {
             var userVoteIndexNumber = surveyList.findIndex(x => x.id == e.id)
@@ -140,8 +192,9 @@ io.on('connection', function (socket) {
 
     })
 
-    socket.on('userlogin', function(e) {
-        console.log("burada data firebasede (users) kontrol edilecek ve içinde yoksa kaydedillecek : ", e)
+
+    socket.on('userlogin', function (e) {
+        saveUser(e)
     })
 });
 http.listen(PORT, function () {

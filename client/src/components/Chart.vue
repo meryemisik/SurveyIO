@@ -21,7 +21,7 @@
       <Card class="chart">
         <template #content>
           <div class="chart">
-            <canvas ref="canvas" id="canvas"></canvas>
+            <canvas ref="canvas" id="canvas" v-show="disableVoteButton"></canvas>
             <div class="chart-vote-button">
               <div class="chart-vote-button-list" v-for="(item, index) in currentData.labels" :key="index">
 

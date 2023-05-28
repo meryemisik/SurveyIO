@@ -1,5 +1,5 @@
 const { initializeApp, firebase } = require("firebase/app");
-const { doc, setDoc, getFirestore, collection, getDocs, query, orderBy } = require("firebase/firestore");
+const { doc, setDoc, getFirestore, collection, getDocs, query, orderBy, where } = require("firebase/firestore");
 
 const firebaseConfig = {
   apiKey: "AIzaSyCsRWt3e5ZsgaLDybCAolXgR8rRFrTxV_M",
@@ -13,5 +13,7 @@ const firebaseConfig = {
 const appx = initializeApp(firebaseConfig);
 const db = getFirestore(appx);
 
-module.exports = {db, getFirestore, collection, 
-getDocs, doc, setDoc, query, orderBy}
+module.exports = {
+  db, getFirestore, collection,
+  getDocs, doc, setDoc, query, orderBy, where
+}
