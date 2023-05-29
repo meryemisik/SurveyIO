@@ -77,7 +77,7 @@ export default {
         })
         .catch((error) => {
           alert(error);
-          this.confirmCodePlace = false;
+          //this.confirmCodePlace = false;
         });
     },
   },

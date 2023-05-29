@@ -175,15 +175,19 @@ io.on('connection', function (socket) {
     const dataSending = () => {
         io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
     }
-
+   
     if (surveyList.length == 0) {
         getAllSurveys().then(() => {
             dataSending()
         })
     }
-    getUserVotes().then(() => {
-        dataSending()
-    })
+    if (userVote.length == 0) {
+        getUserVotes().then(() => {
+            dataSending()
+        })
+    }
+
+    dataSending()
 
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
