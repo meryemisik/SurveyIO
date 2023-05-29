@@ -10,99 +10,104 @@ var PORT = process.env.PORT || 3002
 const { db, getFirestore, collection,
     getDocs, doc, setDoc, query, orderBy, where } = require("./firebase-config");
 
-var surveyList = [
-    {
-        id: 'deneme',
-        chartType: 'bar',
-        chartTitle: "Bar Chart",
-        createdDate: 'Tue May 12 2023 20:00:01 GMT+0300 (GMT+03:00)',
-        votingOptions: [
-            {
-                labelTitle: 'Option X',
-                voteCount: 1,
-                bgColor: "gray",
-                borderColor: "black"
-            },
-            {
-                labelTitle: 'Option Y',
-                voteCount: 1,
-                bgColor: "lightblue",
-                borderColor: "blue"
-            },
-            {
-                labelTitle: 'Option Z',
-                voteCount: 1,
-                bgColor: "pink",
-                borderColor: "red"
-            },
+    var surveyList = []
 
-        ]
-    },
-    {
-        id: 'deneme2',
-        chartType: 'line',
-        chartTitle: "Line Chart",
-        createdDate: 'Tue Jun 11 2023 12:00:01 GMT+0300 (GMT+03:00)',
-        votingOptions: [
-            {
-                labelTitle: 'Option 111',
-                voteCount: 1,
-                bgColor: "pink",
-                borderColor: "purple"
-            },
-            {
-                labelTitle: 'Option 222',
-                voteCount: 1,
-                bgColor: "blue",
-                borderColor: "white"
-            },
-            {
-                labelTitle: 'Option 333',
-                voteCount: 1,
-                bgColor: "red",
-                borderColor: "white"
-            },
-            {
-                labelTitle: 'Option 444',
-                voteCount: 1,
-                bgColor: "yellow",
-                borderColor: "orange"
-            },
-        ]
-    },
-    {
-        id: 'deneme3',
-        chartType: 'pie',
-        chartTitle: "Pie Chart ",
-        createdDate: 'Tue Jun 15 2023 12:00:01 GMT+0300 (GMT+03:00)',
-        votingOptions: [
-            {
-                labelTitle: 'Option A',
-                voteCount: 1,
-                bgColor: "lightblue",
-                borderColor: "blue"
-            },
-            {
-                labelTitle: 'Option B',
-                voteCount: 1,
-                bgColor: "orange",
-                borderColor: "red"
-            }
-        ]
-    },
-]
-var userVote = [
-    {
-        userId: '05541693820',
-        surveyId: 'deneme',
-        selectedOption: 'Option X',
-    },
-    {
-        userId: '05541693823',
-        surveyId: 'deneme3',
-        selectedOption: 'Option A',
-    }
-]
+    var userVote = []
+
+// var surveyList = [
+//     {
+//         id: 'deneme',
+//         chartType: 'bar',
+//         chartTitle: "Bar Chart",
+//         createdDate: 'Tue May 12 2023 20:00:01 GMT+0300 (GMT+03:00)',
+//         votingOptions: [
+//             {
+//                 labelTitle: 'Option X',
+//                 voteCount: 1,
+//                 bgColor: "gray",
+//                 borderColor: "black"
+//             },
+//             {
+//                 labelTitle: 'Option Y',
+//                 voteCount: 1,
+//                 bgColor: "lightblue",
+//                 borderColor: "blue"
+//             },
+//             {
+//                 labelTitle: 'Option Z',
+//                 voteCount: 1,
+//                 bgColor: "pink",
+//                 borderColor: "red"
+//             },
+
+//         ]
+//     },
+//     {
+//         id: 'deneme2',
+//         chartType: 'line',
+//         chartTitle: "Line Chart",
+//         createdDate: 'Tue Jun 11 2023 12:00:01 GMT+0300 (GMT+03:00)',
+//         votingOptions: [
+//             {
+//                 labelTitle: 'Option 111',
+//                 voteCount: 1,
+//                 bgColor: "pink",
+//                 borderColor: "purple"
+//             },
+//             {
+//                 labelTitle: 'Option 222',
+//                 voteCount: 1,
+//                 bgColor: "blue",
+//                 borderColor: "white"
+//             },
+//             {
+//                 labelTitle: 'Option 333',
+//                 voteCount: 1,
+//                 bgColor: "red",
+//                 borderColor: "white"
+//             },
+//             {
+//                 labelTitle: 'Option 444',
+//                 voteCount: 1,
+//                 bgColor: "yellow",
+//                 borderColor: "orange"
+//             },
+//         ]
+//     },
+//     {
+//         id: 'deneme3',
+//         chartType: 'pie',
+//         chartTitle: "Pie Chart ",
+//         createdDate: 'Tue Jun 15 2023 12:00:01 GMT+0300 (GMT+03:00)',
+//         votingOptions: [
+//             {
+//                 labelTitle: 'Option A',
+//                 voteCount: 1,
+//                 bgColor: "lightblue",
+//                 borderColor: "blue"
+//             },
+//             {
+//                 labelTitle: 'Option B',
+//                 voteCount: 2,
+//                 bgColor: "orange",
+//                 borderColor: "red"
+//             }
+//         ]
+//     },
+// ]
+// var userVote = [
+//     {
+//         userId: '05541693821',
+//         surveyId: 'deneme',
+//         selectedOption: 'Option X',
+//     },
+//     {
+//         userId: '05541693823',
+//         surveyId: 'deneme3',
+//         selectedOption: 'Option A',
+//     }
+// ]
+
 app.get('/', function (req, res) {
     res.send()
 })
@@ -111,17 +116,19 @@ const getAllSurveys = async () => {
     const querySnapshot = await getDocs(surveysCol);
 
     querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()['name'].a}`);
+        //console.log(`${doc.id} => ${doc.data()['name'].a}`);
+        surveyList.push(doc.data())
     });
 }
 
 const getUserVotes = async () => {
-    const surveysCol = collection(db, "surveys");
-    const sorting = query(surveysCol, where("Phone", "==", "05372997045"));
-    const querySnapshot = await getDocs(sorting);
+    const uservoteCol = collection(db, "uservote");
+    //const sorting = query(surveysCol, where("userId", "==", "053*******"));
+    const querySnapshot = await getDocs(uservoteCol);
 
     querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()['name'].a}`);
+        userVote.push(doc.data())
+        //console.log(`${doc.id} => ${doc.data()['name'].a}`);
     });
 }
 
@@ -140,7 +147,7 @@ const saveUser = async (e) => {
 
 
 
-const createSurvey = async (e) => {
+const setSurveyList = async (e) => {
     setDoc(
         doc(
             db,
@@ -151,19 +158,36 @@ const createSurvey = async (e) => {
 }
 
 
+const addUserVote = async (e) => {
+    setDoc(
+        doc(
+            db,
+            "uservote",
+            `${e.userId}-${e.surveyId}`
+        ),
+        e)
+}
+
 //siteye giriş yapan kullanıcının bilgisini alır
 //işlemler ve dinlemeler bunun içinde gerçekleşir
 io.on('connection', function (socket) {
 
-    if (surveyList.length == 0) {
-        getAllSurveys()
+    const dataSending = () => {
+        io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
     }
-    getUserVotes()
+
+    if (surveyList.length == 0) {
+        getAllSurveys().then(() => {
+            dataSending()
+        })
+    }
+    getUserVotes().then(() => {
+        dataSending()
+    })
 
     //io.emit tüm tarayıcılara gider
     //socket.emit sadece benim tarayıcıma gelir
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
-    io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
 
 
     socket.on('newChartSendServer', function (e) {
@@ -174,10 +198,10 @@ io.on('connection', function (socket) {
         surveyList.push({
             ...e, id: newChartId, createdDate: newChartDate
         })
-        createSurvey({
+        setSurveyList({
             ...e, id: newChartId, createdDate: newChartDate
         })
-        io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
+        io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
     })
 
 
@@ -186,8 +210,10 @@ io.on('connection', function (socket) {
             var userVoteIndexNumber = surveyList.findIndex(x => x.id == e.id)
             var votingOptionIndexNumber = surveyList[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
             surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
+            setSurveyList(surveyList[userVoteIndexNumber])
             userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
-            io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote, userPhone: '05372997045' })
+            addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: new Date() })
+            io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
         }
 
     })

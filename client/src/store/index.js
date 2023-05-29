@@ -9,6 +9,9 @@ export default new Vuex.Store({
     user: JSON.parse(localStorage.getItem('user')),
   },
   getters: {
+    user (state) {
+      return state.user
+    }
   },
   mutations: {
     setAuth(state, data) {

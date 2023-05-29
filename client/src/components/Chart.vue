@@ -105,6 +105,7 @@
 <script>
 import Chart from "chart.js/auto";
 import moment from "moment";
+import { mapGetters,mapActions} from 'vuex';
 export default {
   name: "Chart",
   sockets: {
@@ -125,17 +126,20 @@ export default {
       }
 
       this.userVoteDataList = data.userVote
-      this.userPhone = data.userPhone
       this.setChart(this.activeChartId);
     },
   },
   created() {
     document.title = "Vote App | MAT"
   },
+  computed: {
+    ...mapGetters({
+      authUser: 'user'
+    })
+  },
   data() {
     return {
       waitingServer: true,
-      userPhone: null,
       selectedUserVoteData: null,
       userVoteDataList: [],
       disableVoteButton: false,
@@ -274,11 +278,11 @@ export default {
       this.createNewChart();
     },
     setChart(e) {
-      if (e) {
+      if (e && e !== this.activeChartId) {
         this.disableVoteButton = false
-        if (!!this.userPhone) {
+        if (!!this.authUser.uid) {
           this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
-            if (x.userId == this.userPhone) {
+            if (x.userId == this.authUser.uid) {
               this.disableVoteButton = true
               this.selectedUserVoteData = x.selectedOption
             }
@@ -352,11 +356,11 @@ export default {
     },
     addVote(e, id) {
       if (e != this.selectedUserVoteData) {
-        this.$socket.emit("voteSendServer", { label: e, id: id, userId: this.userPhone });
+        this.$socket.emit("voteSendServer", { label: e, id: id, userId: this.authUser.uid });
       }
     },
     newChartSetData() {
-      this.$socket.emit("newChartSendServer", this.newChart[0]);
+      this.$socket.emit("newChartSendServer", {...this.newChart[0], userId: this.authUser.uid});
     },
     async createSurvey() {
       this.visibleLeft = false;
