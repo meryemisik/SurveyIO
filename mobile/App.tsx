@@ -55,6 +55,16 @@ function App(): JSX.Element {
   const [userPhoneNumber, setUserPhoneNumber] = useState(null);
   const [disableVoteButton, setDisableVoteButton] = useState(false);
 
+  const [waitingServer, setWaitingServer] = useState(true);
+
+  socket.on('connect', () => {
+    setWaitingServer(false);
+  });
+
+  socket.on('disconnect', () => {
+    setWaitingServer(true);
+  });
+
   const isNumeric = value => {
     return /^\d+$/.test(value);
   };
@@ -227,6 +237,12 @@ function App(): JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
+        {waitingServer && (
+          <View>
+            <Text style={{color: 'red'}}>Bekleyiniz, Bağlanıyor...</Text>
+          </View>
+        )}
+
         <View>
           <View style={{padding: '5%'}}>
             {currentChart && (
@@ -252,9 +268,19 @@ function App(): JSX.Element {
                       key={index}
                       disabled={disableVoteButton}
                       onPress={() => addVote(e)}
-                      style={userVoteDataList.filter(x => currentChart.id == x.surveyId && e == x.selectedOption).length > 0 ?
-                        {marginBottom: 5, borderWidth: 2, borderColor: 'blue'} :
-                        {marginBottom: 5}}
+                      style={
+                        userVoteDataList.filter(
+                          x =>
+                            currentChart.id == x.surveyId &&
+                            e == x.selectedOption,
+                        ).length > 0
+                          ? {
+                              marginBottom: 5,
+                              borderWidth: 2,
+                              borderColor: 'blue',
+                            }
+                          : {marginBottom: 5}
+                      }
                       buttonStyle={
                         !disableVoteButton && {
                           backgroundColor: currentChart.colors[index],

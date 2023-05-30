@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
+import router from './router'
+import store from './store'
 import VueSocketIO from 'vue-socket.io'
 import SocketIO from 'socket.io-client'
 import PrimeVue from 'primevue/config';
 import { Photoshop } from 'vue-color'
 import 'primevue/resources/themes/saga-blue/theme.css'
-import 'primevue/resources/primevue.min.css'          
-import 'primeicons/primeicons.css'                        
+import 'primevue/resources/primevue.min.css'
+import 'primeicons/primeicons.css'
 
 
 //component
@@ -36,14 +38,17 @@ Vue.component('Column', Column);
 Vue.component('ColorPicker', ColorPicker);
 Vue.component('MegaMenu', MegaMenu);
 
-const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
+export const socketConnection = () => {
+  const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
 
-Vue.use(new VueSocketIO({
-  debug: true,
-  connection: socketConnection,
-  transports: ['websocket']
-
-}));
+  Vue.use(new VueSocketIO({
+    debug: true,
+    connection: socketConnection,
+    transports: ['websocket']
+  }));
+}
 new Vue({
+  router,
+  store,
   render: h => h(App),
 }).$mount('#app')

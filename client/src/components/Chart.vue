@@ -5,7 +5,8 @@
         <img alt="logo" src="../image/mat-vote-logo.png" class="mr-2 dashboard-header-logo" />
       </template>
       <template #end>
-        <Button label="Create a Survey" class="p-button-success sidebar-list-add-vote deneme" @click="createSurvey()" />
+        <Button label="Create a Survey" class="p-button-success sidebar-list-btn" @click="createSurvey()" />
+        <Button label="Çıkış" class="p-button-danger sidebar-list-btn" @click="logout()" />
       </template>
     </MegaMenu>
 
@@ -16,10 +17,11 @@
           formatDate(currentData.createdDate)
         }}</small>
       </div>
+      <div style="color: red" v-if="waitingServer">Bekleyiniz, Bağlanıyor...</div>
       <Card class="chart">
         <template #content>
           <div class="chart">
-            <canvas ref="canvas" id="canvas"></canvas>
+            <canvas ref="canvas" id="canvas" v-show="disableVoteButton"></canvas>
             <div class="chart-vote-button">
               <div class="chart-vote-button-list" v-for="(item, index) in currentData.labels" :key="index">
 
@@ -87,8 +89,8 @@
             </div>
           </div>
           <div class="columns-button">
-            <Button @click="newCreateChartColumn()" label="Create New Column" class="deneme" />
-            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" class="deneme" />
+            <Button @click="newCreateChartColumn()" label="Create New Column" />
+            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
           </div>
         </div>
       </div>
@@ -103,35 +105,42 @@
 <script>
 import Chart from "chart.js/auto";
 import moment from "moment";
+import { mapGetters,mapActions} from 'vuex';
 export default {
   name: "Chart",
   sockets: {
     connect: function () {
-      console.log("socket connected 2");
+      this.waitingServer = false
+    },
+    disconnect: function () {
+      this.waitingServer = true
     },
     dataSendFront(data) {
       this.dataChartList = data.surveyList;
 
-      if (this.dataChartList.length > 0 && this.activeChartId == null) {
-        this.activeChartId =
-          this.dataChartList[
+      var createActiveChartID =  this.dataChartList[
             Math.floor(Math.random() * this.dataChartList.length)
           ].id;
+      this.setChart(createActiveChartID);
+      if (this.dataChartList.length > 0 && this.activeChartId == null) {
+        this.activeChartId = createActiveChartID
       }
 
       this.userVoteDataList = data.userVote
-      this.userPhone = data.userPhone
-      this.setChart(this.activeChartId);
+      
     },
   },
   created() {
     document.title = "Vote App | MAT"
-    // that is for set phone number localstorage
-    //localStorage.setItem('phone', "05541693820")
+  },
+  computed: {
+    ...mapGetters({
+      authUser: 'user'
+    })
   },
   data() {
     return {
-      userPhone: null,
+      waitingServer: true,
       selectedUserVoteData: null,
       userVoteDataList: [],
       disableVoteButton: false,
@@ -270,13 +279,11 @@ export default {
       this.createNewChart();
     },
     setChart(e) {
-      if (e) {
+      if (e && e !== this.activeChartId) {
         this.disableVoteButton = false
-        if (!!this.userPhone) {
-          console.log("buraya geldikkk")
+        if (!!this.authUser.uid) {
           this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
-            console.log("x : ", x)
-            if (x.userId == this.userPhone) {
+            if (x.userId == this.authUser.uid) {
               this.disableVoteButton = true
               this.selectedUserVoteData = x.selectedOption
             }
@@ -350,11 +357,11 @@ export default {
     },
     addVote(e, id) {
       if (e != this.selectedUserVoteData) {
-        this.$socket.emit("voteSendServer", { label: e, id: id, userId: this.userPhone });
+        this.$socket.emit("voteSendServer", { label: e, id: id, userId: this.authUser.uid });
       }
     },
     newChartSetData() {
-      this.$socket.emit("newChartSendServer", this.newChart[0]);
+      this.$socket.emit("newChartSendServer", {...this.newChart[0], userId: this.authUser.uid});
     },
     async createSurvey() {
       this.visibleLeft = false;
@@ -407,6 +414,9 @@ export default {
         this.newChart[0].chartType = e.type;
         this.createNewChart();
       }
+    },
+    logout() {
+      this.$store.dispatch('logout')
     },
   },
   watch: {
