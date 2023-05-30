@@ -118,15 +118,16 @@ export default {
     dataSendFront(data) {
       this.dataChartList = data.surveyList;
 
-      if (this.dataChartList.length > 0 && this.activeChartId == null) {
-        this.activeChartId =
-          this.dataChartList[
+      var createActiveChartID =  this.dataChartList[
             Math.floor(Math.random() * this.dataChartList.length)
           ].id;
+      this.setChart(createActiveChartID);
+      if (this.dataChartList.length > 0 && this.activeChartId == null) {
+        this.activeChartId = createActiveChartID
       }
 
       this.userVoteDataList = data.userVote
-      this.setChart(this.activeChartId);
+      
     },
   },
   created() {
