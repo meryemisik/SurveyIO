@@ -140,8 +140,7 @@ const saveUser = async (e) => {
             e.uid
         ),
         {
-            uid: e.uid,
-            phoneNumber: e.phoneNumber,
+            e
         })
 }
 
