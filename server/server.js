@@ -198,7 +198,7 @@ io.on('connection', function (socket) {
         var newChartId = `${Math.floor(
             Math.random() * Math.pow(10, 20),
         )}-${new Date().getTime()}`;
-        var newChartDate = new Date()
+        var newChartDate = Date()
         surveyList.push({
             ...e, id: newChartId, createdDate: newChartDate
         })
@@ -216,7 +216,7 @@ io.on('connection', function (socket) {
             surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
             setSurveyList(surveyList[userVoteIndexNumber])
             userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
-            addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: new Date() })
+            addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: Date() })
             io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
         }
 
@@ -224,7 +224,7 @@ io.on('connection', function (socket) {
 
 
     socket.on('userlogin', function (e) {
-        saveUser(e)
+        saveUser({...e, createdDate: Date()})
     })
 });
 http.listen(PORT, function () {
