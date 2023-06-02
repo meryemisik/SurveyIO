@@ -2,17 +2,49 @@
   <div class="login-page">
 
     <div class="login-page-form">
-      <template v-if="!confirmCodePlace">
-        <span>Telefon numaranız:</span>
-        <input v-model="phoneNumber" type="text" placeholder="+905xxxxxxxxx" />
-        <button @click="loginUser">Gönder</button>
-      </template>
+      <div v-if="!confirmCodePlace" class="login-page-form-content">
+        <template>
+          <div class="login-page-form-logo">
+            <img src="../../image/mat-logo.png" />
+          </div>
+          <span>Telefon numaranız:</span>
+          <InputMask  v-model="phoneNumber"
+            type="text"
+            class="login-page-form-input"
+            mask="(999) 999-9999" placeholder="(___)-___-____"
+           
+            />
+          <Button
+            label="Gönder"
+            @click="loginUser"
+            class="login-page-form-button"
+            :disabled="submitButtonVisible"
+          />
+        </template>
+      </div>
 
-      <template v-else>
-        <span>Onay Kodu:</span>
-        <input v-model="confirmCode" type="text" />
-        <button @click="signConfirmation">Gönder</button>
-      </template>
+      <div v-else>
+        <template>
+          <Dialog
+            :visible.sync="confirmCodePlace"
+            header="Onay Kodu"
+            :style="{ width: '300px' }"
+          >
+            <div class="login-page-form-confirmation">
+              <InputText
+                v-model="confirmCode"
+                type="text"
+                class="login-page-form-input"
+              />
+              <Button
+                label="Gönder"
+                @click="signConfirmation"
+                class="login-page-form-button"
+              />
+            </div>
+          </Dialog>
+        </template>
+      </div>
     </div>
 
 
@@ -36,6 +68,8 @@ export default {
       phoneNumber: null,
       confirmCodePlace: false,
       confirmCode: null,
+      submitButtonVisible: true,
+      currentPhoneNumber:null
     };
   },
   mounted() {
@@ -55,7 +89,7 @@ export default {
     },
     loginUser() {
       const appVerifier = window.recaptchaVerifier;
-      signInWithPhoneNumber(auth, this.phoneNumber, appVerifier)
+      signInWithPhoneNumber(auth, this.currentPhoneNumber, appVerifier)
         .then((confirmationResult) => {
           window.confirmationResult = confirmationResult;
           this.confirmCodePlace = true;
@@ -72,7 +106,10 @@ export default {
           console.log("user", user);
 
           this.$store.dispatch('setAuth', user)
-          this.$socket.emit("userlogin", {uid: user.uid, phoneNumber: user.phoneNumber});
+          this.$socket.emit("userlogin", {
+            uid: user.uid,
+            phoneNumber: user.currentPhoneNumber,
+          });
           this.$router.push("/");
         })
         .catch((error) => {
@@ -81,18 +118,20 @@ export default {
         });
     },
   },
+  watch: {
+    phoneNumber(data) {
+      data = `+90`+ data
+      this.currentPhoneNumber = `${data}`.replace(/[() -]/g,'')
+
+      if (data.length > 11) {
+        this.submitButtonVisible = false;
+      } else {
+        this.submitButtonVisible = true;
+      }
+    },
+  },
 };
 </script>
-<style scoped>
-.login-page {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.login-page-form{
-  display: flex;
-  flex-direction: column;
-}
+<style lang="scss">
+@import "../../assets/scss/login.scss";
 </style>

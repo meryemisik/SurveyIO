@@ -2,7 +2,7 @@
   <div class="dashboard">
     <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
       <template #start class="dashboard-header">
-        <img alt="logo" src="../image/mat-vote-logo.png" class="mr-2 dashboard-header-logo" />
+        <img alt="logo" src="../image/mat-logo.png" class="mr-2 dashboard-header-logo" />
       </template>
       <template #end>
         <Button label="Create a Survey" class="p-button-success sidebar-list-btn" @click="createSurvey()" />
