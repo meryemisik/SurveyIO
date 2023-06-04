@@ -1,8 +1,8 @@
-# MAT Vote App
+# SurveyIO
 
 Projenin amacı kullanıcıların kolay bir şekilde istedikleri konu hakkında diğer kişilerin ne düşündüğünü herkese açık şekilde görebilmektir.
 
-![](https://raw.githubusercontent.com/meryemisik/mat-vote-app/main/client/src/image/mat-vote-logo.png)
+![](https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/mat-vote-logo.png)
 
 
 # Başlarken
@@ -37,5 +37,5 @@ Projeyi kendi localinizde çalıştırabilmek için öncelikle bulunduğu dizine
 
 # Demo Linkleri
 
-- [Web APP](https://mat-vote-app.vercel.app/)
+- [Web APP](https://survey-io.vercel.app/)
 - [Mobile APP](#)
