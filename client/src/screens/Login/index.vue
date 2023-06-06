@@ -1,7 +1,7 @@
 <template>
   <div class="login-page">
-
-    <div class="login-page-form">
+    <Loading v-if="loadingVisible"/>
+    <div class="login-page-form" v-else>
       <div v-if="!confirmCodePlace" class="login-page-form-content">
         <template>
           <div class="login-page-form-logo">
@@ -64,10 +64,12 @@ import {
   updateProfile,
   signOut,
 } from "./../../firebase-config";
+import Loading from '../../components/Loading.vue'
 export default {
   name: "login",
   data() {
     return {
+      loadingVisible: false,
       phoneNumber: null,
       confirmCodePlace: false,
       confirmCode: null,
@@ -75,6 +77,9 @@ export default {
       visibleSignConfirmation:true,
       currentPhoneNumber:null
     };
+  },
+  components:{
+    Loading
   },
   mounted() {
     this.createVerify();
@@ -92,10 +97,12 @@ export default {
       );
     },
     loginUser() {
+      this.loadingVisible = true
       const appVerifier = window.recaptchaVerifier;
       signInWithPhoneNumber(auth, this.currentPhoneNumber, appVerifier)
         .then((confirmationResult) => {
           window.confirmationResult = confirmationResult;
+          this.loadingVisible = false
           this.confirmCodePlace = true;
         })
         .catch((error) => {
