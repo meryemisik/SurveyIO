@@ -230,11 +230,11 @@ export default {
               },
             },
             {
-              label: "Account",
+              label: "My Account",
               icon: "pi pi-user",
             },
             {
-              label: "log out",
+              label: "Logout",
               icon: "pi pi-sign-out",
               command: () => {
                 this.$store.dispatch("logout");

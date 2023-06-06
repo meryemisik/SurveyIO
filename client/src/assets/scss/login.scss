@@ -26,7 +26,8 @@ body{
         /* justify-content: center; */
         align-items: center;
         img {
-          height: 70px;
+          max-height: 36px;
+          margin-bottom: 2em;
         }
       }
       &-button {
