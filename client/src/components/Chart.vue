@@ -16,15 +16,16 @@
         />
       </template>
     </MegaMenu>
+      <Loading v-show="waitingServer"/>
 
-    <div class="dashboard-content">
+    <div class="dashboard-content" v-show="!waitingServer">
       <div class="dashboard-chart-header">
         <h2>{{ currentData.chartTitle }}</h2>
         <small class="dashboard-chart-header-date">{{
           formatDate(currentData.createdDate)
         }}</small>
       </div>
-      <div style="color: red" v-if="waitingServer">Bekleyiniz, Bağlanıyor...</div>
+
       <Card class="chart">
         <template #content>
           <div class="chart">
@@ -68,8 +69,11 @@
     </div>
 
  <Sidebar header="Add Survey" :visible.sync="addVoteModalVisible" position="right" class="sidebar-list-add-vote-modal">
-  <span>New Chart</span>
+  <span class="sidebar-title">New Chart</span>
       <div class="sidebar-list-item">
+        <div class="chart-modal">
+        <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
+      </div>
         <div class="label-columns" v-if="selectedChart">
           <div class="label-columns-item">
             <label>Chart Type</label>
@@ -87,7 +91,7 @@
 
         <div class="label-columns-background" v-if="selectedChart">
           <label>Columns & Background</label>
-          <div class="columns-option">
+          <div class="columns-option thin-scrollbar ">
             <div class="columns-option-item" v-for="(item, index) in newChart[0].votingOptions" :key="index">
               <InputText type="text" class="p-inputtext-sm" @blur="changeLabelName(newChart[0].votingOptions)"
                 v-model.trim="newChart[0].votingOptions[index].labelTitle" />
@@ -100,11 +104,9 @@
         </div>
       </div>
 
-      <div class="chart-modal">
-        <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
-      </div>
+      
       <div class="columns-button">
-            <Button @click="newCreateChartColumn()" label="Create New Column" />
+            <Button @click="newCreateChartColumn()" label="Add Column" />
             <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
           </div>
     </Sidebar> 
@@ -112,6 +114,7 @@
 </template>
 
 <script>
+import Loading from './Loading.vue'
 import Chart from "chart.js/auto";
 import moment from "moment";
 import { mapGetters,mapActions} from 'vuex';
@@ -149,8 +152,6 @@ export default {
   },
   data() {
     return {
-      vm: this,
-      mero : 'meroşko' ,
       waitingServer: true,
       selectedUserVoteData: null,
       userVoteDataList: [],
@@ -219,8 +220,7 @@ export default {
       ],
       items: [
         {
-          // :`${authUser.phoneNumber}`
-          label: vm.mero,
+          label: this.$store.state.user.phoneNumber,
           items: [
             {
               label: "Create Survey",
@@ -244,6 +244,9 @@ export default {
         },
       ],
     };
+  },
+  components:{
+    Loading
   },
   methods: {
     toggle(event) {

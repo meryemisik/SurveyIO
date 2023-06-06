@@ -9,8 +9,8 @@ import { Photoshop } from 'vue-color'
 import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.min.css'
 import 'primeicons/primeicons.css'
-
-
+import './assets/scss/style.scss'
+import './assets/scss/loading.scss'
 //component
 import Sidebar from 'primevue/sidebar';
 import Button from 'primevue/button';
