@@ -2,7 +2,7 @@
 
 Projenin amacı kullanıcıların kolay bir şekilde istedikleri konu hakkında diğer kişilerin ne düşündüğünü herkese açık şekilde görebilmektir.
 
-![](https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/mat-vote-logo.png)
+![](https://raw.githubusercontent.com/meryemisik/mat-vote-app/main/client/src/image/logo.png | width = 100)
 
 
 # Başlarken

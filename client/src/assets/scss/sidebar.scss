@@ -5,8 +5,8 @@
 
     &-item {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        gap: 10px;
 
         &-delete {
             color: rgb(255, 99, 132) !important;

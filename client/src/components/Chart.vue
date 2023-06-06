@@ -2,11 +2,18 @@
   <div class="dashboard">
     <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
       <template #start class="dashboard-header">
-        <img alt="logo" src="../image/mat-logo.png" class="mr-2 dashboard-header-logo" />
+        <img alt="logo" src="../image/logo.png" class="mr-2 dashboard-header-logo" />
       </template>
       <template #end>
-        <Button label="Create a Survey" class="p-button-success sidebar-list-btn" @click="createSurvey()" />
-        <Button label="Çıkış" class="p-button-danger sidebar-list-btn" @click="logout()" />
+        <div class="dashboard-toggle" @click="toggle">
+          <i class="pi pi-align-justify" />
+        </div>
+        <Menu
+          ref="menu"
+          id="overlay_menu"
+          :model="items"
+          :popup="true"
+        />
       </template>
     </MegaMenu>
 
@@ -60,8 +67,9 @@
       </DataTable>
     </div>
 
-    <Dialog header="Add Survey" :visible.sync="addVoteModalVisible" class="sidebar-list-add-vote-modal">
-      <div class="sidebar-list-add-vote-modal-item">
+ <Sidebar header="Add Survey" :visible.sync="addVoteModalVisible" position="right" class="sidebar-list-add-vote-modal">
+  <span>New Chart</span>
+      <div class="sidebar-list-item">
         <div class="label-columns" v-if="selectedChart">
           <div class="label-columns-item">
             <label>Chart Type</label>
@@ -77,7 +85,7 @@
           </div>
         </div>
 
-        <div class="" v-if="selectedChart">
+        <div class="label-columns-background" v-if="selectedChart">
           <label>Columns & Background</label>
           <div class="columns-option">
             <div class="columns-option-item" v-for="(item, index) in newChart[0].votingOptions" :key="index">
@@ -88,17 +96,18 @@
                 @click="deleteNewChartColumn(index)" v-show="newChart[0].votingOptions.length > 2" />
             </div>
           </div>
-          <div class="columns-button">
-            <Button @click="newCreateChartColumn()" label="Create New Column" />
-            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
-          </div>
+          
         </div>
       </div>
 
       <div class="chart-modal">
         <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
       </div>
-    </Dialog>
+      <div class="columns-button">
+            <Button @click="newCreateChartColumn()" label="Create New Column" />
+            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
+          </div>
+    </Sidebar> 
   </div>
 </template>
 
@@ -140,6 +149,8 @@ export default {
   },
   data() {
     return {
+      vm: this,
+      mero : 'meroşko' ,
       waitingServer: true,
       selectedUserVoteData: null,
       userVoteDataList: [],
@@ -206,9 +217,38 @@ export default {
         { name: "Line Chart", type: "line" },
         { name: "Pie Chart", type: "pie" },
       ],
+      items: [
+        {
+          // :`${authUser.phoneNumber}`
+          label: vm.mero,
+          items: [
+            {
+              label: "Create Survey",
+              icon: "pi pi-plus",
+              command: () => {
+                this.createSurvey();
+              },
+            },
+            {
+              label: "Account",
+              icon: "pi pi-user",
+            },
+            {
+              label: "log out",
+              icon: "pi pi-sign-out",
+              command: () => {
+                this.$store.dispatch("logout");
+                }
+            },
+          ],
+        },
+      ],
     };
   },
   methods: {
+    toggle(event) {
+      this.$refs.menu.toggle(event);
+    },
     clickDataListTableRow(e) {
       this.setChart(e.data.id);
     },
@@ -414,9 +454,6 @@ export default {
         this.newChart[0].chartType = e.type;
         this.createNewChart();
       }
-    },
-    logout() {
-      this.$store.dispatch('logout')
     },
   },
   watch: {

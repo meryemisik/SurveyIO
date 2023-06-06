@@ -23,6 +23,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import MegaMenu from 'primevue/megamenu';
 import InputMask from 'primevue/inputmask';
+import Menu from 'primevue/menu';
 
 Vue.use(PrimeVue);
 Vue.config.productionTip = false
@@ -39,6 +40,7 @@ Vue.component('Column', Column);
 Vue.component('ColorPicker', ColorPicker);
 Vue.component('MegaMenu', MegaMenu);
 Vue.component('InputMask', InputMask);
+Vue.component('Menu', Menu);
 
 export const socketConnection = () => {
   const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
