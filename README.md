@@ -2,7 +2,7 @@
 
 Projenin amacı kullanıcıların kolay bir şekilde istedikleri konu hakkında diğer kişilerin ne düşündüğünü herkese açık şekilde görebilmektir.
 <p align="center">
-<img src="https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/readme-logo.png" style="width: 100%; max-width: 480px" />
+<img src="https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/readme-logo.png" style="width: clamp(100px, 100%, 480px) !important " />
 </p>
 
 # Başlarken
