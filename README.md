@@ -1,9 +1,9 @@
 # SurveyIO
 
 Projenin amacı kullanıcıların kolay bir şekilde istedikleri konu hakkında diğer kişilerin ne düşündüğünü herkese açık şekilde görebilmektir.
-
-![](https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/logo.png)
-
+<p align="center">
+<img src="https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/readme-logo.png" width="100" />
+</p>
 
 # Başlarken
 
