@@ -14,100 +14,6 @@ const { db, getFirestore, collection,
 
     var userVote = []
 
-// var surveyList = [
-//     {
-//         id: 'deneme',
-//         chartType: 'bar',
-//         chartTitle: "Bar Chart",
-//         createdDate: 'Tue May 12 2023 20:00:01 GMT+0300 (GMT+03:00)',
-//         votingOptions: [
-//             {
-//                 labelTitle: 'Option X',
-//                 voteCount: 1,
-//                 bgColor: "gray",
-//                 borderColor: "black"
-//             },
-//             {
-//                 labelTitle: 'Option Y',
-//                 voteCount: 1,
-//                 bgColor: "lightblue",
-//                 borderColor: "blue"
-//             },
-//             {
-//                 labelTitle: 'Option Z',
-//                 voteCount: 1,
-//                 bgColor: "pink",
-//                 borderColor: "red"
-//             },
-
-//         ]
-//     },
-//     {
-//         id: 'deneme2',
-//         chartType: 'line',
-//         chartTitle: "Line Chart",
-//         createdDate: 'Tue Jun 11 2023 12:00:01 GMT+0300 (GMT+03:00)',
-//         votingOptions: [
-//             {
-//                 labelTitle: 'Option 111',
-//                 voteCount: 1,
-//                 bgColor: "pink",
-//                 borderColor: "purple"
-//             },
-//             {
-//                 labelTitle: 'Option 222',
-//                 voteCount: 1,
-//                 bgColor: "blue",
-//                 borderColor: "white"
-//             },
-//             {
-//                 labelTitle: 'Option 333',
-//                 voteCount: 1,
-//                 bgColor: "red",
-//                 borderColor: "white"
-//             },
-//             {
-//                 labelTitle: 'Option 444',
-//                 voteCount: 1,
-//                 bgColor: "yellow",
-//                 borderColor: "orange"
-//             },
-//         ]
-//     },
-//     {
-//         id: 'deneme3',
-//         chartType: 'pie',
-//         chartTitle: "Pie Chart ",
-//         createdDate: 'Tue Jun 15 2023 12:00:01 GMT+0300 (GMT+03:00)',
-//         votingOptions: [
-//             {
-//                 labelTitle: 'Option A',
-//                 voteCount: 1,
-//                 bgColor: "lightblue",
-//                 borderColor: "blue"
-//             },
-//             {
-//                 labelTitle: 'Option B',
-//                 voteCount: 2,
-//                 bgColor: "orange",
-//                 borderColor: "red"
-//             }
-//         ]
-//     },
-// ]
-// var userVote = [
-//     {
-//         userId: '05541693821',
-//         surveyId: 'deneme',
-//         selectedOption: 'Option X',
-//     },
-//     {
-//         userId: '05541693823',
-//         surveyId: 'deneme3',
-//         selectedOption: 'Option A',
-//     }
-// ]
-
 app.get('/', function (req, res) {
     res.send()
 })
@@ -115,9 +21,10 @@ const getAllSurveys = async () => {
     const surveysCol = collection(db, "surveys");
     const querySnapshot = await getDocs(surveysCol);
 
-    querySnapshot.forEach((doc) => {
-        //console.log(`${doc.id} => ${doc.data()['name'].a}`);
-        surveyList.push(doc.data())
+    querySnapshot.forEach((doc) => { 
+        if(surveyList.filter(e => e.id == doc.data().id).length == 0){
+           surveyList.push(doc.data())
+        }
     });
 }
 
@@ -139,9 +46,7 @@ const saveUser = async (e) => {
             "users",
             e.uid
         ),
-        {
-            e
-        })
+        e)
 }
 
 

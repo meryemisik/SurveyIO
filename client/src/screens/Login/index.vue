@@ -5,14 +5,13 @@
       <div v-if="!confirmCodePlace" class="login-page-form-content">
         <template>
           <div class="login-page-form-logo">
-            <img src="../../image/mat-logo.png" />
+            <img src="../../image/logo.png" />
           </div>
           <span>Telefon numaranız:</span>
-          <InputMask  v-model="phoneNumber"
+          <InputMask  v-model="phoneNumber" autofocus
             type="text"
             class="login-page-form-input"
             mask="(999) 999-9999" placeholder="(___)-___-____"
-           
             />
           <Button
             label="Gönder"
@@ -32,14 +31,18 @@
           >
             <div class="login-page-form-confirmation">
               <InputText
+               autofocus
                 v-model="confirmCode"
                 type="text"
                 class="login-page-form-input"
+                maxlength="6"
+                minlength="6"
               />
               <Button
                 label="Gönder"
                 @click="signConfirmation"
                 class="login-page-form-button"
+                :disabled="visibleSignConfirmation"
               />
             </div>
           </Dialog>
@@ -69,6 +72,7 @@ export default {
       confirmCodePlace: false,
       confirmCode: null,
       submitButtonVisible: true,
+      visibleSignConfirmation:true,
       currentPhoneNumber:null
     };
   },
@@ -108,7 +112,7 @@ export default {
           this.$store.dispatch('setAuth', user)
           this.$socket.emit("userlogin", {
             uid: user.uid,
-            phoneNumber: user.currentPhoneNumber,
+            phoneNumber: user.phoneNumber,
           });
           this.$router.push("/");
         })
@@ -120,13 +124,20 @@ export default {
   },
   watch: {
     phoneNumber(data) {
-      data = `+90`+ data
-      this.currentPhoneNumber = `${data}`.replace(/[() -]/g,'')
-
-      if (data.length > 11) {
+      this.currentPhoneNumber = `${data}`.replace(/[^\d]/g, "")
+      this.currentPhoneNumber = `+90${this.currentPhoneNumber}`
+      this.submitButtonVisible = true;
+      if (this.currentPhoneNumber.length ==  13) {
         this.submitButtonVisible = false;
-      } else {
-        this.submitButtonVisible = true;
+      } 
+    },
+    confirmCode(data) {
+      this.visibleSignConfirmation = true
+      if(data.length == 6){
+        this.visibleSignConfirmation = false
+        if(this.visibleSignConfirmation){
+          this.signConfirmation()
+        }
       }
     },
   },
