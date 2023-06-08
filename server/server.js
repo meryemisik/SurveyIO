@@ -106,10 +106,13 @@ io.on('connection', function (socket) {
         surveyList.push({
             ...e, id: newChartId, createdDate: newChartDate
         })
-        setSurveyList({
-            ...e, id: newChartId, createdDate: newChartDate
-        })
+       
         io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
+        if(e.userId != 'testUser'){
+            setSurveyList({
+                ...e, id: newChartId, createdDate: newChartDate
+            })
+        }
     })
 
 
@@ -117,11 +120,13 @@ io.on('connection', function (socket) {
         if (!!e.label && !!e.id) {
             var userVoteIndexNumber = surveyList.findIndex(x => x.id == e.id)
             var votingOptionIndexNumber = surveyList[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
-            surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
-            setSurveyList(surveyList[userVoteIndexNumber])
+            surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++ 
             userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
-            addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: Date() })
             io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
+            if(e.userId != 'testUser'){
+                setSurveyList(surveyList[userVoteIndexNumber])
+                addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: Date() })
+            }
         }
 
     })

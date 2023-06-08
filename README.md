@@ -5,6 +5,10 @@ Projenin amacı kullanıcıların kolay bir şekilde istedikleri konu hakkında 
 <img src="https://raw.githubusercontent.com/meryemisik/survey-io/main/client/src/image/readme-logo.png" style="width: clamp(100px, 100%, 480px) !important " />
 </p>
 
+# Önemli Not
+
+Normal şartlarda projeye telefon numaranız ile login olup SMS ile OTP girişi yapabiliyorsunuz. Fakat projede Google Firebase Authentication ücretsiz limitleri sebebi ile günlük 10 doğrulama kadarına izin veriliyor. Eğer giriş yaptığınızda bir sorun ile karşılaşırsanız "Telefon Numarası" alanına "1111111111" şeklinde giriş yapabilirsiniz :)
+
 # Başlarken
 
 Proje 3 ana dizinden oluşmaktadır. Bunlar server (Firebase, Socket.IO), client/frontend (VueJS) ve mobile app (React Native) teknolojileri kullanılarak geliştirilmektedir.
