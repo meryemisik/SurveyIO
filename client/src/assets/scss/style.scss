@@ -1,17 +1,59 @@
 .thin-scrollbar {
     &::-webkit-scrollbar {
         width: 6px;
-  
+
         &-track {
             background: #fff;
         }
-  
+
         &-thumb {
             background: #f3f5f7;
-  
+
             &:hover {
                 background: #f3f5f7;
             }
         }
     }
-  }
+}
+
+.chart-size {
+    max-height: 300px;
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+    width: auto !important;
+
+    #canvas {
+        width: auto !important;
+    }
+}
+
+.p-tabview-nav {
+    .p-tabview-nav-link:not(.p-disabled):focus {
+        outline: 0 none;
+        outline-offset: 0;
+        box-shadow: none !important;
+    }
+}
+
+.p-panel-header {
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.p-panel-content {
+    border-radius: 0 0 12px 12px !important;
+}
+.p-inputtext{
+    line-height: 26px;
+    &:enabled{
+        &:focus {
+            outline: 0 none;
+            outline-offset: 0;
+            box-shadow: none;
+            border-color: #2196F3;
+        }
+        &:hover{
+            border-color: #b3b9bf !important;
+        }
+    }
+}

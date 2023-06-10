@@ -1,11 +1,15 @@
 body{
     font-family: Arial, Helvetica, sans-serif;
 }
+.p-dialog{
+  border-radius: 12px !important;
+}
 .login-page {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    
     &-form {
       background: white;
       width: 500px;
@@ -62,6 +66,12 @@ body{
         display: flex;
         flex-direction: column;
         gap: 10px;
+      }
+      &-information{
+        border: 1px solid rgb(20, 116, 138);
+        color: rgb(20, 116, 138);
+        padding: 2px;
+        border-radius: 100%;
       }
     }
   }
