@@ -48,7 +48,7 @@ router.beforeEach((to, from, next) => {
 })
 router.afterEach((to) => {
   Vue.nextTick(() => {
-      document.title = to.meta.title || 'ServeyIO';
+      document.title = to.meta.title || 'SurveyIO';
   });
 });
 export default router

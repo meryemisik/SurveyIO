@@ -28,6 +28,7 @@ import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 import Panel from 'primevue/panel';
 import Tooltip from 'primevue/tooltip';
+import Breadcrumb from 'primevue/breadcrumb'
 
 Vue.directive('tooltip', Tooltip);
 Vue.use(PrimeVue);
@@ -49,6 +50,7 @@ Vue.component('Menu', Menu);
 Vue.component('TabView', TabView);
 Vue.component('TabPanel', TabPanel);
 Vue.component('Panel', Panel);
+Vue.component('Breadcrumb', Breadcrumb)
 export const socketConnection = () => {
   const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
 

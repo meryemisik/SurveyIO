@@ -10,9 +10,9 @@ var PORT = process.env.PORT || 3002
 const { db, getFirestore, collection,
     getDocs, doc, setDoc, query, orderBy, where } = require("./firebase-config");
 
-    var surveyList = []
+var surveyList = []
 
-    var userVote = []
+var userVote = []
 
 app.get('/', function (req, res) {
     res.send()
@@ -21,9 +21,9 @@ const getAllSurveys = async () => {
     const surveysCol = collection(db, "surveys");
     const querySnapshot = await getDocs(surveysCol);
 
-    querySnapshot.forEach((doc) => { 
-        if(surveyList.filter(e => e.id == doc.data().id).length == 0){
-           surveyList.push(doc.data())
+    querySnapshot.forEach((doc) => {
+        if (surveyList.filter(e => e.id == doc.data().id).length == 0) {
+            surveyList.push(doc.data())
         }
     });
 }
@@ -72,6 +72,18 @@ const addUserVote = async (e) => {
         e)
 }
 
+const checkUser = async (userId) => {
+    const usersCol = collection(db, "users");
+    const filter = query(usersCol, where("uid", "==", userId));
+    const querySnapshot = await getDocs(filter);
+
+    var isUser = false
+    querySnapshot.forEach((doc) => {
+        return isUser = true
+    });
+    return isUser
+}
+
 //siteye giriş yapan kullanıcının bilgisini alır
 //işlemler ve dinlemeler bunun içinde gerçekleşir
 io.on('connection', function (socket) {
@@ -79,7 +91,7 @@ io.on('connection', function (socket) {
     const dataSending = () => {
         io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
     }
-   
+
     if (surveyList.length == 0) {
         getAllSurveys().then(() => {
             dataSending()
@@ -98,7 +110,7 @@ io.on('connection', function (socket) {
     //socket.broadcast benim dışımdaki diğer tarayıcılara gider
 
 
-    socket.on('newChartSendServer', function (e) {
+    socket.on('newChartSendServer', async function (e) {
         var newChartId = `${Math.floor(
             Math.random() * Math.pow(10, 20),
         )}-${new Date().getTime()}`;
@@ -106,34 +118,46 @@ io.on('connection', function (socket) {
         surveyList.push({
             ...e, id: newChartId, createdDate: newChartDate
         })
-       
+
         io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
-        if(e.userId != 'testUser'){
-            setSurveyList({
-                ...e, id: newChartId, createdDate: newChartDate
-            })
+        if (await checkUser(e.userId)) {
+            if(e.userId != 'testUser'){
+                setSurveyList({
+                    ...e, id: newChartId, createdDate: newChartDate
+                })
+            }
+        }
+        else{
+            socket.emit('userLogout')
         }
     })
 
 
-    socket.on('voteSendServer', function (e) {
+    socket.on('voteSendServer', async function (e) {
         if (!!e.label && !!e.id) {
             var userVoteIndexNumber = surveyList.findIndex(x => x.id == e.id)
             var votingOptionIndexNumber = surveyList[userVoteIndexNumber].votingOptions.findIndex(x => x.labelTitle == e.label)
-            surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++ 
+            surveyList[userVoteIndexNumber].votingOptions[votingOptionIndexNumber].voteCount++
             userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
             io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
-            if(e.userId != 'testUser'){
-                setSurveyList(surveyList[userVoteIndexNumber])
+            if (await checkUser(e.userId)) {
+                if(e.userId != 'testUser'){
+                    setSurveyList(surveyList[userVoteIndexNumber])
                 addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: Date() })
+                }
+            }
+            else{
+                socket.emit('userLogout')
             }
         }
 
     })
 
 
-    socket.on('userlogin', function (e) {
-        saveUser({...e, createdDate: Date()})
+    socket.on('userlogin', async function (e) {
+        if (await !checkUser(e.uid)) {
+            saveUser({ ...e, createdDate: Date() })
+        }
     })
 });
 http.listen(PORT, function () {

@@ -1,107 +1,56 @@
 <template>
   <div class="profile-page">
-    <Header/>
+    <Header />
 
 
     <div class="profile-page-content">
       <div class="profile-page-content-list">
+        <Breadcrumb :home="home" :model="items" />
+        <br/>
         <Panel header="PROFILE">
           <TabView>
-          <TabPanel header="MY SURVEY LIST">
-            <div v-show="chartSurveyListVisible" class="chart-size">
-              <canvas ref="canvas" id="canvas"></canvas>
-            </div>
-            <DataTable
-             paginator
-             :rows="5" 
-              scrollable
-              :value="mySurveyList"
-              resizableRows
-              columnResizeMode="fit"
-              tableStyle="min-width: 50rem"
-              @row-click="clickDataListTableRow($event)"
-              class="dashboard-chart-table"
-            >
-              <Column
-                field="chartTitle"
-                header="Chart Name"
-                sortable
-                style="width: 25%"
-              ></Column>
-              <Column
-                field="votingOption"
-                header="Total Voting"
-                sortable
-                style="width: 25%"
-              >
-                <template #body="slotProps">
-                  {{ totalVotingValue(slotProps) }}
-                </template>
-              </Column>
-              <Column
-                field="createdDate"
-                header="Create Date"
-                sortable
-                style="width: 25%"
-              >
-                <template #body="slotProps">
-                  {{ formatDate(slotProps.data.createdDate) }}
-                </template>
-              </Column>
-            </DataTable>
-          </TabPanel>
-          <TabPanel header="MY VOTED LIST">
-            <div v-show="chartVotedListVisible" class="chart-size">
-              <canvas ref="canvasMyVoted" id="canvasMyVoted"></canvas>
-            </div>
-            <DataTable
-            paginator
-             :rows="5" 
-              scrollable
-              :value="myVotedList"
-              resizableRows
-              columnResizeMode="fit"
-              tableStyle="min-width: 50rem"
-              @row-click="clickMyVotedListTableRow($event)"
-              class="dashboard-chart-table"
-            >
-              <Column
-                field="chartTitle"
-                header="Chart Name"
-                sortable
-                style="width: 25%"
-              ></Column>
-              <Column
-                field="selectedOption"
-                header="My Voted"
-                sortable
-                style="width: 25%"
-              ></Column>
-              <Column
-                field="votingOption"
-                header="Total Voting"
-                sortable
-                style="width: 25%"
-              >
-                <template #body="slotProps">
-                  {{ totalVotingValue(slotProps) }}
-                </template>
-              </Column>
-              <Column
-                field="createdDate"
-                header="Voted Date"
-                sortable
-                style="width: 25%"
-              >
-                <template #body="slotProps">
-                  {{ formatDate(slotProps.data.createdDate) }}
-                </template>
-              </Column>
-            </DataTable>
-          </TabPanel>
-        </TabView>
-</Panel>
-       
+            <TabPanel header="MY SURVEY LIST">
+              <div v-show="chartSurveyListVisible" class="chart-size">
+                <canvas ref="canvas" id="canvas"></canvas>
+              </div>
+              <DataTable paginator :rows="5" scrollable :value="mySurveyList" resizableRows columnResizeMode="fit"
+                tableStyle="min-width: 50rem" @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
+                <Column field="chartTitle" header="Chart Name" sortable></Column>
+                <Column field="votingOption" header="Total Voting" sortable>
+                  <template #body="slotProps">
+                    {{ totalVotingValue(slotProps) }}
+                  </template>
+                </Column>
+                <Column field="createdDate" header="Create Date" sortable>
+                  <template #body="slotProps">
+                    {{ formatDate(slotProps.data.createdDate) }}
+                  </template>
+                </Column>
+              </DataTable>
+            </TabPanel>
+            <TabPanel header="MY VOTED LIST">
+              <div v-show="chartVotedListVisible" class="chart-size">
+                <canvas ref="canvasMyVoted" id="canvasMyVoted"></canvas>
+              </div>
+              <DataTable paginator :rows="5" scrollable :value="myVotedList" resizableRows columnResizeMode="fit"
+                tableStyle="min-width: 50rem" @row-click="clickMyVotedListTableRow($event)" class="dashboard-chart-table">
+                <Column field="chartTitle" header="Chart Name" sortable></Column>
+                <Column field="selectedOption" header="My Voted" sortable></Column>
+                <Column field="createdDate" header="Voted Date" sortable>
+                  <template #body="slotProps">
+                    {{ formatDate(slotProps.data.createdDate) }}
+                  </template>
+                </Column>
+                <Column field="votingOption" header="Total Voting" sortable>
+                  <template #body="slotProps">
+                    {{ totalVotingValue(slotProps) }}
+                  </template>
+                </Column>
+              </DataTable>
+            </TabPanel>
+          </TabView>
+        </Panel>
+
       </div>
     </div>
   </div>
@@ -118,9 +67,16 @@ export default {
       mySurveyList: [],
       myVotedList: [],
       chartBar: null,
-      chartBarVoted:null,
+      chartBarVoted: null,
       chartSurveyListVisible: false,
-      chartVotedListVisible:false,
+      chartVotedListVisible: false,
+      home: {
+                icon: 'pi pi-home',
+                to: '/',
+            },
+            items: [
+                {label: 'Profile'}
+            ]
     };
   },
   sockets: {
@@ -128,14 +84,14 @@ export default {
       data.surveyList
         .filter((e) => e.userId == this.$store.state.user.uid)
         .map((e) => {
-          this.mySurveyList.push(e);
+          if (this.mySurveyList.filter((x) => x.surveyId == e.surveyId).length < 1) {
+            this.mySurveyList.push(e);
+          }
         });
       data.userVote
         .filter((e) => e.userId == this.$store.state.user.uid)
         .map((e) => {
-          if (
-            this.myVotedList.filter((x) => x.surveyId == e.surveyId).length < 1
-          ) {
+          if (this.myVotedList.filter((x) => x.surveyId == e.surveyId).length < 1) {
             var userVoteSurveyDetail = data.surveyList.find(
               (x) => x.id == e.surveyId
             );
@@ -256,12 +212,12 @@ export default {
         this.mySurveyChart(e.data);
       }
     },
-    clickMyVotedListTableRow(e){
+    clickMyVotedListTableRow(e) {
       this.chartVotedListVisible = true;
       if (this.chartVotedListVisible) {
         this.myVotedChart(e.data);
       }
-      
+
     },
   },
 };

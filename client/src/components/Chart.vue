@@ -15,11 +15,12 @@
         <div class="chart">
           <template>
             <div class="chart">
+             <div  v-show="disableVoteButton">
               <canvas
                 ref="canvas"
-                id="canvas"
-                v-show="disableVoteButton"
+                id="canvas"            
               ></canvas>
+             </div>
               <div class="chart-vote-button">
                 <div
                   class="chart-vote-button-list"
@@ -198,9 +199,9 @@ export default {
 
       this.userVoteDataList = data.userVote;
     },
-  },
-  created() {
-    document.title = "Vote App | MAT";
+    userLogout() {
+      this.$store.dispatch("logout")
+    },
   },
   computed: {
     ...mapGetters({
