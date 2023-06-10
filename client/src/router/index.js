@@ -3,6 +3,7 @@ import store from '@/store/index'
 import VueRouter from 'vue-router'
 import HomeView from '../screens/Home'
 import Login from '../screens/Login'
+import Profile from "../screens/Profile"
 import { socketConnection } from './../main'
 Vue.use(VueRouter)
 
@@ -16,6 +17,11 @@ const routes = [
     path: '/login',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: Profile
   },
 ]
 
@@ -40,5 +46,9 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-
+router.afterEach((to) => {
+  Vue.nextTick(() => {
+      document.title = to.meta.title || 'ServeyIO';
+  });
+});
 export default router

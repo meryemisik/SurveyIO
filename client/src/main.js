@@ -24,7 +24,12 @@ import Column from 'primevue/column';
 import MegaMenu from 'primevue/megamenu';
 import InputMask from 'primevue/inputmask';
 import Menu from 'primevue/menu';
+import TabView from 'primevue/tabview';
+import TabPanel from 'primevue/tabpanel';
+import Panel from 'primevue/panel';
+import Tooltip from 'primevue/tooltip';
 
+Vue.directive('tooltip', Tooltip);
 Vue.use(PrimeVue);
 Vue.config.productionTip = false
 Vue.component('Photoshop', Photoshop);
@@ -41,7 +46,9 @@ Vue.component('ColorPicker', ColorPicker);
 Vue.component('MegaMenu', MegaMenu);
 Vue.component('InputMask', InputMask);
 Vue.component('Menu', Menu);
-
+Vue.component('TabView', TabView);
+Vue.component('TabPanel', TabPanel);
+Vue.component('Panel', Panel);
 export const socketConnection = () => {
   const socketConnection = SocketIO(process.env.VUE_APP_SERVER_URL);
 

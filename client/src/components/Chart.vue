@@ -1,154 +1,211 @@
 <template>
   <div class="dashboard">
-    <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
-      <template #start class="dashboard-header">
-        <img alt="logo" src="../image/logo.png" class="mr-2 dashboard-header-logo" />
-      </template>
-      <template #end>
-        <div class="dashboard-toggle" @click="toggle">
-          <i class="pi pi-align-justify" />
-        </div>
-        <Menu
-          ref="menu"
-          id="overlay_menu"
-          :model="items"
-          :popup="true"
-        />
-      </template>
-    </MegaMenu>
-      <Loading v-show="waitingServer"/>
+    <Header @newChart="this.createSurvey" />
+    <Loading v-show="waitingServer" />
 
     <div class="dashboard-content" v-show="!waitingServer">
-      <div class="dashboard-chart-header">
-        <h2>{{ currentData.chartTitle }}</h2>
-        <small class="dashboard-chart-header-date">{{
-          formatDate(currentData.createdDate)
-        }}</small>
-      </div>
+      <Panel header="SURVEYS">
+        <div class="dashboard-chart-header">
+          <h2>{{ currentData.chartTitle }}</h2>
+          <small class="dashboard-chart-header-date">{{
+            formatDate(currentData.createdDate)
+          }}</small>
+        </div>
 
-      <Card class="chart">
-        <template #content>
-          <div class="chart">
-            <canvas ref="canvas" id="canvas" v-show="disableVoteButton"></canvas>
-            <div class="chart-vote-button">
-              <div class="chart-vote-button-list" v-for="(item, index) in currentData.labels" :key="index">
-
-                <button :class="{ 'selected-vote': selectedUserVoteData == item }" :disabled="disableVoteButton"
-                  v-if="currentData.labels != []" @click="addVote(item, currentData.id)" :style="{
-                    'background-color': currentData.colors[index],
-                    color: currentData.borderColors[index],
-                    'border-color': currentData.borderColors[index],
-                  }">
-                  {{ item }}
-                </button>
+        <div class="chart">
+          <template>
+            <div class="chart">
+              <canvas
+                ref="canvas"
+                id="canvas"
+                v-show="disableVoteButton"
+              ></canvas>
+              <div class="chart-vote-button">
+                <div
+                  class="chart-vote-button-list"
+                  v-for="(item, index) in currentData.labels"
+                  :key="index"
+                >
+                  <button
+                    :class="{ 'selected-vote': selectedUserVoteData == item }"
+                    :disabled="disableVoteButton"
+                    v-if="currentData.labels != []"
+                    @click="addVote(item, currentData.id)"
+                    :style="{
+                      'background-color': currentData.colors[index],
+                      color: currentData.borderColors[index],
+                      'border-color': currentData.borderColors[index],
+                    }"
+                  >
+                    {{ item }}
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        </template>
-      </Card>
+          </template>
+        </div>
 
-      <DataTable scrollable :value="dataChartList" resizableRows columnResizeMode="fit" tableStyle="min-width: 50rem"
-        @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
-        <Column field="chartTitle" header="Chart Name" sortable style="width: 25%"></Column>
-        <Column field="votingOption" header="Total Voting" sortable style="width: 25%">
-          <template #body="slotProps">
-            {{ totalVotingValue(slotProps) }}
-          </template>
-        </Column>
-        <Column field="quantity" header="Total Option" sortable style="width: 25%">
-          <template #body="slotProps">
-            {{ slotProps.data.votingOptions.length }}
-          </template>
-        </Column>
-        <Column field="createdDate" header="Create Date" sortable style="width: 25%">
-          <template #body="slotProps">
-            {{ formatDate(slotProps.data.createdDate) }}
-          </template>
-        </Column>
-      </DataTable>
+        <DataTable
+          paginator
+          :rows="5"
+          scrollable
+          :value="dataChartList"
+          resizableRows
+          columnResizeMode="fit"
+          tableStyle="min-width: 50rem"
+          @row-click="clickDataListTableRow($event)"
+          class="dashboard-chart-table"
+        >
+          <Column
+            field="chartTitle"
+            header="Chart Name"
+            sortable
+            style="width: 25%"
+          ></Column>
+          <Column
+            field="votingOption"
+            header="Total Voting"
+            sortable
+            style="width: 25%"
+          >
+            <template #body="slotProps">
+              {{ totalVotingValue(slotProps) }}
+            </template>
+          </Column>
+          <Column
+            field="quantity"
+            header="Total Option"
+            sortable
+            style="width: 25%"
+          >
+            <template #body="slotProps">
+              {{ slotProps.data.votingOptions.length }}
+            </template>
+          </Column>
+          <Column
+            field="createdDate"
+            header="Create Date"
+            sortable
+            style="width: 25%"
+          >
+            <template #body="slotProps">
+              {{ formatDate(slotProps.data.createdDate) }}
+            </template>
+          </Column>
+        </DataTable>
+      </Panel>
     </div>
 
- <Sidebar header="Add Survey" :visible.sync="addVoteModalVisible" position="right" class="sidebar-list-add-vote-modal">
-  <span class="sidebar-title">New Chart</span>
+    <Sidebar
+      header="Add Survey"
+      :visible.sync="addVoteModalVisible"
+      position="right"
+      class="sidebar-list-add-vote-modal"
+    >
+      <span class="sidebar-title">New Chart</span>
       <div class="sidebar-list-item">
         <div class="chart-modal">
-        <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
-      </div>
+          <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
+        </div>
         <div class="label-columns" v-if="selectedChart">
           <div class="label-columns-item">
             <label>Chart Type</label>
-            <Dropdown v-model="selectedChart" :options="charts" optionLabel="name" placeholder="Select Chart Type"
-              @change="changeChartType(selectedChart)" />
+            <Dropdown
+              v-model="selectedChart"
+              :options="charts"
+              optionLabel="name"
+              placeholder="Select Chart Type"
+              @change="changeChartType(selectedChart)"
+            />
           </div>
           <div class="chart-title">
             <label>Chart Title</label>
             <div class="chart-title-item">
-              <InputText type="text" class="p-inputtext-sm chart-title-item-input" v-model="newChartTitle"
-                @blur="changeChartTitle(newChartTitle)" />
+              <InputText
+                type="text"
+                class="p-inputtext-sm chart-title-item-input"
+                v-model="newChartTitle"
+                @blur="changeChartTitle(newChartTitle)"
+              />
             </div>
           </div>
         </div>
 
         <div class="label-columns-background" v-if="selectedChart">
           <label>Columns & Background</label>
-          <div class="columns-option thin-scrollbar ">
-            <div class="columns-option-item" v-for="(item, index) in newChart[0].votingOptions" :key="index">
-              <InputText type="text" class="p-inputtext-sm" @blur="changeLabelName(newChart[0].votingOptions)"
-                v-model.trim="newChart[0].votingOptions[index].labelTitle" />
+          <div class="columns-option thin-scrollbar">
+            <div
+              class="columns-option-item"
+              v-for="(item, index) in newChart[0].votingOptions"
+              :key="index"
+            >
+              <InputText
+                type="text"
+                class="p-inputtext-sm"
+                @blur="changeLabelName(newChart[0].votingOptions)"
+                v-model.trim="newChart[0].votingOptions[index].labelTitle"
+              />
               <ColorPicker v-model="color[index]" format="rgb" />
-              <Button icon="pi pi-trash" class="p-button-text sidebar-list-item-delete"
-                @click="deleteNewChartColumn(index)" v-show="newChart[0].votingOptions.length > 2" />
+              <Button
+                icon="pi pi-trash"
+                class="p-button-text sidebar-list-item-delete"
+                @click="deleteNewChartColumn(index)"
+                v-show="newChart[0].votingOptions.length > 2"
+              />
             </div>
           </div>
-          
         </div>
       </div>
 
-      
       <div class="columns-button">
-            <Button @click="newCreateChartColumn()" label="Add Column" />
-            <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
-          </div>
-    </Sidebar> 
+        <Button @click="newCreateChartColumn()" label="Add Column" />
+        <Button
+          @click="newChartSetData()"
+          label="Create Chart"
+          :disabled="newChartSetDataVisible"
+        />
+      </div>
+    </Sidebar>
   </div>
 </template>
 
 <script>
-import Loading from './Loading.vue'
+import Loading from "./Loading.vue";
+import Header from "./Header";
 import Chart from "chart.js/auto";
 import moment from "moment";
-import { mapGetters,mapActions} from 'vuex';
+import { mapGetters, mapActions } from "vuex";
 export default {
   name: "Chart",
   sockets: {
     connect: function () {
-      this.waitingServer = false
+      this.waitingServer = false;
     },
     disconnect: function () {
-      this.waitingServer = true
+      this.waitingServer = true;
     },
     dataSendFront(data) {
       this.dataChartList = data.surveyList;
 
-      var createActiveChartID =  this.dataChartList[
-            Math.floor(Math.random() * this.dataChartList.length)
-          ].id;
+      var createActiveChartID =
+        this.dataChartList[
+          Math.floor(Math.random() * this.dataChartList.length)
+        ].id;
       this.setChart(createActiveChartID);
       if (this.dataChartList.length > 0 && this.activeChartId == null) {
-        this.activeChartId = createActiveChartID
+        this.activeChartId = createActiveChartID;
       }
 
-      this.userVoteDataList = data.userVote
-      
+      this.userVoteDataList = data.userVote;
     },
   },
   created() {
-    document.title = "Vote App | MAT"
+    document.title = "Vote App | MAT";
   },
   computed: {
     ...mapGetters({
-      authUser: 'user'
-    })
+      authUser: "user",
+    }),
   },
   data() {
     return {
@@ -232,21 +289,23 @@ export default {
             {
               label: "My Account",
               icon: "pi pi-user",
+              to: "/profile",
             },
             {
               label: "Logout",
               icon: "pi pi-sign-out",
               command: () => {
                 this.$store.dispatch("logout");
-                }
+              },
             },
           ],
         },
       ],
     };
   },
-  components:{
-    Loading
+  components: {
+    Loading,
+    Header,
   },
   methods: {
     toggle(event) {
@@ -323,14 +382,16 @@ export default {
     },
     setChart(e) {
       if (e && e !== this.activeChartId) {
-        this.disableVoteButton = false
+        this.disableVoteButton = false;
         if (!!this.authUser.uid) {
-          this.userVoteDataList.filter(x => e == x.surveyId).map((x) => {
-            if (x.userId == this.authUser.uid) {
-              this.disableVoteButton = true
-              this.selectedUserVoteData = x.selectedOption
-            }
-          })
+          this.userVoteDataList
+            .filter((x) => e == x.surveyId)
+            .map((x) => {
+              if (x.userId == this.authUser.uid) {
+                this.disableVoteButton = true;
+                this.selectedUserVoteData = x.selectedOption;
+              }
+            });
         }
         this.activeChartId = e;
         var currentChart = {};
@@ -400,11 +461,18 @@ export default {
     },
     addVote(e, id) {
       if (e != this.selectedUserVoteData) {
-        this.$socket.emit("voteSendServer", { label: e, id: id, userId: this.authUser.uid });
+        this.$socket.emit("voteSendServer", {
+          label: e,
+          id: id,
+          userId: this.authUser.uid,
+        });
       }
     },
     newChartSetData() {
-      this.$socket.emit("newChartSendServer", {...this.newChart[0], userId: this.authUser.uid});
+      this.$socket.emit("newChartSendServer", {
+        ...this.newChart[0],
+        userId: this.authUser.uid,
+      });
     },
     async createSurvey() {
       this.visibleLeft = false;

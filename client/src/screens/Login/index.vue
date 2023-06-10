@@ -7,7 +7,7 @@
           <div class="login-page-form-logo">
             <img src="../../image/logo.png" />
           </div>
-          <span>Telefon numaranız:</span>
+          <span>Telefon numaranız: <span v-if="informationVisible" class="login-page-form-information" ><i class="pi pi-info" v-tooltip.right="{ value: `<span>Deneme</span>`, escape: true, class: 'custom-error' }"/></span> </span>
           <InputMask v-model="phoneNumber" autofocus type="text" class="login-page-form-input" mask="(999) 999-9999"
             placeholder="(___)-___-____" />
           <Button label="Gönder" @click="loginUser" class="login-page-form-button" :disabled="submitButtonVisible" />
@@ -53,7 +53,8 @@ export default {
       confirmCode: null,
       submitButtonVisible: true,
       visibleSignConfirmation: true,
-      currentPhoneNumber: null
+      currentPhoneNumber: null,
+      informationVisible:false
     };
   },
   components: {
@@ -95,7 +96,8 @@ export default {
           this.confirmCodePlace = true;
         })
         .catch((error) => {
-          alert(error);
+          this.loadingVisible = false
+          this.informationVisible = true
         });
     },
     signConfirmation() {
