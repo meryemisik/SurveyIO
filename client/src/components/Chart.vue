@@ -159,7 +159,7 @@
       </div>
 
       <div class="columns-button">
-        <Button @click="newCreateChartColumn()" label="Add Column" />
+        <Button @click="newCreateChartColumn()" label="Add Column" :disabled=" newChart[0].votingOptions.length >= 5"/>
         <Button
           @click="newChartSetData()"
           label="Create Chart"
@@ -250,13 +250,13 @@ export default {
           chartTitle: "",
           votingOptions: [
             {
-              labelTitle: "First Title",
+              labelTitle: "Example Title 1",
               bgColor: "",
               borderColor: "",
               voteCount: 0,
             },
             {
-              labelTitle: "Second Title",
+              labelTitle: "Example Title 2",
               bgColor: "",
               borderColor: "",
               voteCount: 0,
@@ -331,8 +331,11 @@ export default {
       this.getNewChartData();
     },
     newCreateChartColumn() {
+      const uniqueId = this.newChart[0].votingOptions.length + 1;
+      const labelTitle = "Example Title " + uniqueId;
+
       this.newChart[0].votingOptions.push({
-        labelTitle: "example name",
+        labelTitle: labelTitle,
         bgColor: "",
         borderColor: "",
         voteCount: 0,
