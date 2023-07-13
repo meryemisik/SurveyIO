@@ -1,29 +1,27 @@
 <template>
-  <div class="dashboard">
-    <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
-      <template #start class="dashboard-header">
-        <img
-          alt="logo"
-          src="../image/logo.png"
-          class="mr-2 dashboard-header-logo"
-        />
-      </template>
-      <template #end>
-        <div class="dashboard-toggle" @click="toggle">
-          <i class="pi pi-align-justify" />
-        </div>
-        <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
-      </template>
-    </MegaMenu>
+  <div>
+    <div class="dashboard">
+      <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
+        <template #start class="dashboard-header">
+          <img alt="logo" src="../image/logo.png" class="mr-2 dashboard-header-logo" />
+        </template>
+        <template #end>
+          <div class="dashboard-toggle" @click="toggle">
+            <i class="pi pi-align-justify" />
+          </div>
+          <Menu ref="menu" id="overlay_menu" :model="items" :popup="true" />
+        </template>
+      </MegaMenu>
+    </div>
+    <CreateChartSidebar ref="sidebar" />
   </div>
 </template>
 
 <script>
+import CreateChartSidebar from './CreateChartSidebar.vue';
 export default {
   name: "Header",
   data() {
-
-
     return {
       items: [
         {
@@ -33,7 +31,7 @@ export default {
               label: "New Chart",
               icon: "pi pi-plus",
               command: () => {
-                this.createSurvey();
+                this.openSidebar();
               },
             },
             {
@@ -53,10 +51,12 @@ export default {
       ],
     };
   },
-
+  components: {
+    CreateChartSidebar
+  },
   methods: {
-    createSurvey(){
-      this.$emit('newChart');
+    openSidebar() {
+      this.$refs.sidebar.openSidebar()
     },
     toggle(event) {
       this.$refs.menu.toggle(event);
@@ -67,5 +67,4 @@ export default {
 
 <style lang="scss">
 @import "../assets/scss/chartBar.scss";
-@import "../assets/scss/sidebar.scss";
 </style>
