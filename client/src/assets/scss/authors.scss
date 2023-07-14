@@ -1,0 +1,86 @@
+.authors-chart {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 140px 20px 36px;
+    width: fit-content;
+    margin: 16px auto;
+    background: #fff;
+    border-radius: 16px;
+
+    &-list {
+        display: flex;
+        border-bottom: 2px solid rgb(227, 0, 174);
+        position: relative;
+        padding: 0;
+        list-style: none;
+        width: 280px;
+
+        &::before,
+        &:after {
+            //content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border: 2px solid red;
+            border-radius: 10px;
+            top: -6px;
+            background-color: #fff;
+        }
+
+        &::before {
+            left: 0;
+        }
+        &::after {
+            right: 0;
+        }
+    }
+
+    &-item {
+        position: absolute;
+        width: 70px;
+        aspect-ratio: 1;
+        border-radius: 100%;
+        //padding: 10px 16px;
+        top: 50%;
+        transform: translate(0, -50%);
+        left: 15%;
+
+        &:last-child {
+            left: auto;
+            right: 15%;
+        }
+
+        img {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 100%;
+            z-index: 1;
+            position: relative;
+            transition: .2s linear;
+        }
+
+        &::before {
+            content: attr(author);
+            position: absolute;
+            width: auto;
+            right: 50%;
+            top: -60px;
+            transform: translate(50%, 0) rotate(-90deg);
+            background-color: #ffa4fa;
+            padding: 6px 10px 6px 48px;
+        }
+
+        &:last-child{
+            &::before{
+                background-color: aqua;
+            }
+        }
+
+        &:hover{
+            img{
+                width: 110%;
+            }
+        }
+    }
+}

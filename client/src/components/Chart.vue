@@ -56,6 +56,7 @@
       </Panel>
     </div>
 
+    <Authors/>
 
   </div>
 </template>
@@ -63,6 +64,7 @@
 <script>
 import Loading from "./Loading.vue";
 import Header from "./Header";
+import Authors from "./Authors.vue";
 import Chart from "chart.js/auto";
 import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
@@ -122,11 +124,9 @@ export default {
   components: {
     Loading,
     Header,
+    Authors,
   },
   methods: {
-    toggle(event) {
-      this.$refs.menu.toggle(event);
-    },
     clickDataListTableRow(e) {
       this.setChart(e.data.id);
     },
