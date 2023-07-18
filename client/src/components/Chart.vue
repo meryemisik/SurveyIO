@@ -82,12 +82,11 @@ export default {
         this.dataChartList[
           Math.floor(Math.random() * this.dataChartList.length)
         ].id;
+      this.userVoteDataList = data.userVote;
       this.setChart(createActiveChartID);
       if (this.dataChartList.length > 0 && this.activeChartId == null) {
         this.activeChartId = createActiveChartID;
       }
-
-      this.userVoteDataList = data.userVote;
     },
     userLogout() {
       this.$store.dispatch("logout")

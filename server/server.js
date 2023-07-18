@@ -141,7 +141,7 @@ io.on('connection', function (socket) {
             userVote.push({ selectedOption: e.label, surveyId: e.id, userId: e.userId })
             io.emit('dataSendFront', { surveyList: surveyList, userVote: userVote })
             if (await checkUser(e.userId)) {
-                if(e.userId != 'testUser'){
+                if(e.userId != 'testUser' && surveyList[userVoteIndexNumber].userId != 'testUser'){
                     setSurveyList(surveyList[userVoteIndexNumber])
                 addUserVote({ selectedOption: e.label, surveyId: e.id, userId: e.userId, createdDate: Date() })
                 }
