@@ -3,7 +3,9 @@
     <div class="dashboard">
       <MegaMenu orientation="horizontal" class="dashboard-header-megamenu">
         <template #start class="dashboard-header">
-          <img alt="logo" src="../image/logo.png" class="mr-2 dashboard-header-logo" />
+          <a href="/">
+            <img alt="logo" src="../image/logo.png" class="mr-2 dashboard-header-logo" />
+          </a>
         </template>
         <template #end>
           <div class="dashboard-toggle" @click="toggle">

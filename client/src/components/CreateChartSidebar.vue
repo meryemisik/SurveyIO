@@ -22,7 +22,7 @@
         </div>
 
         <div class="label-columns-background" v-if="selectedChart">
-          <label>Columns & Background</label>
+          <label>Columns</label>
           <div class="columns-option thin-scrollbar">
             <div class="columns-option-item" v-for="(item, index) in newChart[0].votingOptions" :key="index">
               <InputText type="text" class="p-inputtext-sm" @blur="changeLabelName(newChart[0].votingOptions)"
@@ -36,7 +36,7 @@
       </div>
 
       <div class="columns-button">
-        <Button @click="newCreateChartColumn()" label="Add Column" :disabled="newChart[0].votingOptions.length >= 5" />
+        <Button @click="newCreateChartColumn()" label="Add Column" v-if="newChart[0].votingOptions.length < 5" />
         <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
       </div>
     </Sidebar>

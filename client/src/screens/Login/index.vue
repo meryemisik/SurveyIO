@@ -7,10 +7,10 @@
           <div class="login-page-form-logo">
             <img src="../../image/logo.png" />
           </div>
-          <span>Telefon numaranız: <span v-if="informationVisible" class="login-page-form-information" ><i class="pi pi-info" v-tooltip.right="{ value: `<span>Deneme</span>`, escape: true, class: 'custom-error' }"/></span> </span>
+          <span>Phone Number: <span v-if="informationVisible" class="login-page-form-information" ><i class="pi pi-info" v-tooltip.right="{ value: `Use number '111111111' to login as test user!`, escape: true, class: 'custom-error' }"/></span> </span>
           <InputMask v-model="phoneNumber" autofocus type="text" class="login-page-form-input" mask="(999) 999-9999"
             placeholder="(___)-___-____" />
-          <Button label="Gönder" @click="loginUser" class="login-page-form-button" :disabled="submitButtonVisible" />
+          <Button label="Submit" @click="loginUser" class="login-page-form-button" :disabled="submitButtonVisible" />
         </template>
       </div>
 
@@ -20,7 +20,7 @@
             <div class="login-page-form-confirmation">
               <InputText autofocus v-model="confirmCode" type="text" class="login-page-form-input" maxlength="6"
                 minlength="6" />
-              <Button label="Gönder" @click="signConfirmation" class="login-page-form-button"
+              <Button label="Submit" @click="signConfirmation" class="login-page-form-button"
                 :disabled="visibleSignConfirmation" />
             </div>
           </Dialog>
@@ -54,7 +54,7 @@ export default {
       submitButtonVisible: true,
       visibleSignConfirmation: true,
       currentPhoneNumber: null,
-      informationVisible:false
+      informationVisible:true
     };
   },
   components: {

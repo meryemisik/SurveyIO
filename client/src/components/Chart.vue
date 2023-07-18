@@ -78,7 +78,7 @@ export default {
       this.waitingServer = true;
     },
     dataSendFront(data) {
-      this.dataChartList = data.surveyList;
+      this.dataChartList = data.surveyList.reverse();
 
       var createActiveChartID =
         this.dataChartList[
