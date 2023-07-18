@@ -30,7 +30,7 @@ export default {
           label: this.$store.state.user.phoneNumber,
           items: [
             {
-              label: "New Chart",
+              label: "New Survey",
               icon: "pi pi-plus",
               command: () => {
                 this.openSidebar();

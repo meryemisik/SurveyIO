@@ -15,7 +15,7 @@
               </div>
               <DataTable paginator :rows="5" scrollable :value="mySurveyList" resizableRows columnResizeMode="fit"
                 tableStyle="min-width: 50rem" @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
-                <Column field="chartTitle" header="Chart Name" sortable></Column>
+                <Column field="chartTitle" header="Survey Title" sortable></Column>
                 <Column field="votingOption" header="Total Voting" sortable>
                   <template #body="slotProps">
                     {{ totalVotingValue(slotProps) }}
@@ -34,8 +34,8 @@
               </div>
               <DataTable paginator :rows="5" scrollable :value="myVotedList" resizableRows columnResizeMode="fit"
                 tableStyle="min-width: 50rem" @row-click="clickMyVotedListTableRow($event)" class="dashboard-chart-table">
-                <Column field="chartTitle" header="Chart Name" sortable></Column>
-                <Column field="selectedOption" header="My Voted" sortable></Column>
+                <Column field="chartTitle" header="Survey Title" sortable></Column>
+                <Column field="selectedOption" header="My Voted"></Column>
                 <Column field="createdDate" header="Voted Date" sortable>
                   <template #body="slotProps">
                     {{ formatDate(slotProps.data.createdDate) }}

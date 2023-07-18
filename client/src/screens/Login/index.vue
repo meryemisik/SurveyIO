@@ -54,7 +54,7 @@ export default {
       submitButtonVisible: true,
       visibleSignConfirmation: true,
       currentPhoneNumber: null,
-      informationVisible:true
+      informationVisible: false
     };
   },
   components: {

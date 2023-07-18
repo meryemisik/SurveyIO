@@ -1,7 +1,7 @@
 <template>
   <div>
     <Sidebar header="Add Survey" :visible.sync="addVoteModalVisible" position="right" class="sidebar-list-add-vote-modal">
-      <span class="sidebar-title">New Chart</span>
+      <span class="sidebar-title">New Survey</span>
       <div class="sidebar-list-item">
         <div class="chart-modal">
           <canvas width="250px" ref="canvasModal" id="canvasModal"></canvas>
@@ -13,7 +13,7 @@
               @change="changeChartType(selectedChart)" />
           </div>
           <div class="chart-title">
-            <label>Chart Title</label>
+            <label>Survey Title</label>
             <div class="chart-title-item">
               <InputText type="text" class="p-inputtext-sm chart-title-item-input" v-model="newChartTitle"
                 @blur="changeChartTitle(newChartTitle)" />
@@ -37,14 +37,14 @@
 
       <div class="columns-button">
         <Button @click="newCreateChartColumn()" label="Add Column" v-if="newChart[0].votingOptions.length < 5" />
-        <Button @click="newChartSetData()" label="Create Chart" :disabled="newChartSetDataVisible" />
+        <Button @click="newChartSetData()" label="Create Survey" :disabled="newChartSetDataVisible" />
       </div>
     </Sidebar>
   </div>
 </template>
   
 <script>
-import Chart from "chart.js/auto";
+import Chart from "chart.js/auto"; 
 import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
 export default {

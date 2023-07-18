@@ -28,7 +28,7 @@ label {
   &-toggle {
     border-radius: 8px;
     padding: 10px;
-    background: rgb(20, 116, 138) !important;
+    background: var(--main-color) !important;
     color: white;
     font-weight: bold;
     cursor: pointer;
@@ -173,9 +173,17 @@ label {
 
     button {
       width: 100%;
-      
+      background-color: var(--main-color);
+      border-color: var(--main-color) !important;
       .p-button-label{
         padding: 5px 10px;
+      }
+      &:hover{
+        background: var(--main-color) !important;
+        border-color: var(--main-color) !important;
+      }
+      &:focus{
+        box-shadow: none
       }
     }
   }
