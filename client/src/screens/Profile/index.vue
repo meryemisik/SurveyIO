@@ -14,7 +14,7 @@
                 <canvas ref="canvas" id="canvas"></canvas>
               </div>
               <DataTable paginator :rows="5" scrollable :value="mySurveyList" resizableRows columnResizeMode="fit"
-                tableStyle="min-width: 50rem" @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
+                tableStyle="min-width: 60rem" @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
                 <Column field="chartTitle" header="Survey Title" sortable></Column>
                 <Column field="votingOption" header="Total Voting" sortable>
                   <template #body="slotProps">

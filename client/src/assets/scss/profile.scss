@@ -1,11 +1,13 @@
 .profile {
     &-page-content {
-        padding-top: 90px;
+
         display: flex;
         justify-content: space-evenly;
 
         &-list {
-            flex: 0 0 20%;
+            margin: auto;
+            width: clamp(280px, 90%, 1000px);
+            padding-top: 90px;
         }
 
         &-information {

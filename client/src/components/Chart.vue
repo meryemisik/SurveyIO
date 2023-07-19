@@ -35,7 +35,7 @@
         </div>
 
         <DataTable paginator :rows="5" scrollable :value="dataChartList" resizableRows columnResizeMode="fit"
-          tableStyle="min-width: 50rem" @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
+          tableStyle="min-width: 60rem" @row-click="clickDataListTableRow($event)" class="dashboard-chart-table">
           <Column field="chartTitle" header="Survey Title" sortable style="width: 25%"></Column>
           <Column field="votingOption" header="Total Voting" sortable style="width: 25%">
             <template #body="slotProps">

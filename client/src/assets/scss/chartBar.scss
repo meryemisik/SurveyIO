@@ -47,6 +47,31 @@ label {
       top: 0;
       width: 100%;
       z-index: 1;
+      .p-megamenu-panel{
+        position: absolute;
+        right: 0;
+      }
+      .pi-angle-down{
+        display: none;
+      }
+      .p-megamenu-root-list{
+        .p-menuitem{
+          &-link{
+            &:not(.p-disabled):hover{
+              background: none !important;
+            }
+          }
+          &-icon.pi-align-justify{
+            padding: 7px 10px; 
+            border-radius: 5px;
+            color: white !important;
+            background: var(--main-color) !important;
+            margin-right: 0 !important;
+          }
+        }
+      }
+      
+      
     }
   }
 
@@ -75,7 +100,7 @@ label {
 
   &-content {
     margin: auto;
-    width: clamp(280px, 90%, 800px);
+    width: clamp(280px, 90%, 1000px);
     padding-top: 90px;
 
     .p-card-title {
