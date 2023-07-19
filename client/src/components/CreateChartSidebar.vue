@@ -44,7 +44,7 @@
 </template>
   
 <script>
-import Chart from "chart.js/auto"; 
+import Chart from "chart.js/auto";
 import moment from "moment";
 import { mapGetters, mapActions } from "vuex";
 export default {
@@ -57,14 +57,29 @@ export default {
         { name: "Pie Chart", type: "pie" },
       ],
       addVoteModalVisible: false,
-      selectedChart: { name: "Bar Chart", type: "bar" },
+      selectedChart: null,
       newChartSetDataVisible: true,
-      newChartTitle: "Your Survey Title",
+      newChartTitle: null,
       newChartLabelName: [],
       newChartColumnBgColor: [],
       newChartColumnBorderColor: [],
       newChartColumnScore: [],
-      newChart: [
+      newChart: [],
+      chartBarModal: null,
+      color: [],
+    };
+  },
+
+  methods: {
+    initialNewChartForm() {
+      this.selectedChart = { name: "Bar Chart", type: "bar" }
+      this.newChartSetDataVisible = true
+      this.newChartTitle = "Your Survey Title"
+      this.newChartLabelName = []
+      this.newChartColumnBgColor = []
+      this.newChartColumnBorderColor = []
+      this.newChartColumnScore = []
+      this.newChart = [
         {
           chartType: "bar",
           chartTitle: "",
@@ -83,10 +98,8 @@ export default {
             },
           ],
         },
-      ],
-      chartBarModal: null,
-
-      color: [
+      ]
+      this.color = [
         {
           r: Math.floor(Math.random() * 255),
           g: Math.floor(Math.random() * 255),
@@ -97,12 +110,10 @@ export default {
           g: Math.floor(Math.random() * 255),
           b: Math.floor(Math.random() * 255),
         },
-      ],
-    };
-  },
-
-  methods: {
+      ]
+    },
     async openSidebar() {
+      this.initialNewChartForm()
       this.addVoteModalVisible = true;
       setTimeout(() => {
         this.changeChartType(this.selectedChart);
@@ -119,9 +130,7 @@ export default {
           labels: this.newChartLabelName,
           datasets: [
             {
-              label: this.newChartTitle
-                ? this.newChartTitle
-                : "Your Survey Title",
+              label: this.newChartTitle,
               data: this.newChartColumnScore,
               backgroundColor: this.newChartColumnBgColor,
               borderColor: this.newChartColumnBorderColor,
@@ -190,6 +199,7 @@ export default {
         //console.log("x", x);
       });
       this.getNewChartData();
+      this.newChartSetDataVisible = false
     },
     getNewChartData() {
       this.color.map((x, index) => {
@@ -220,6 +230,8 @@ export default {
         ...this.newChart[0],
         userId: this.authUser.uid,
       });
+      this.addVoteModalVisible = false
+      this.initialNewChartForm()
     },
   },
   computed: {
