@@ -78,10 +78,13 @@ export default {
     dataSendFront(data) {
       this.dataChartList = data.surveyList.reverse();
 
-      var createActiveChartID =
+      var createActiveChartID = this.activeChartId
+      if(this.activeChartId == null){
+        createActiveChartID =
         this.dataChartList[
           Math.floor(Math.random() * this.dataChartList.length)
         ].id;
+      }
       this.userVoteDataList = data.userVote;
       this.setChart(createActiveChartID);
       if (this.dataChartList.length > 0 && this.activeChartId == null) {
@@ -138,7 +141,7 @@ export default {
       return moment(value).format(`DD.MM.YYYY`);
     },
     setChart(e) {
-      if (e && e !== this.activeChartId) {
+      if (e) {
         this.disableVoteButton = false;
         if (!!this.authUser.uid) {
           this.userVoteDataList

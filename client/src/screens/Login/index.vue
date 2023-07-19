@@ -10,13 +10,13 @@
           <span>Phone Number: <span v-if="informationVisible" class="login-page-form-information" ><i class="pi pi-info" v-tooltip.right="{ value: `Use number '111111111' to login as test user!`, escape: true, class: 'custom-error' }"/></span> </span>
           <InputMask v-model="phoneNumber" autofocus type="text" class="login-page-form-input" mask="(999) 999-9999"
             placeholder="(___)-___-____" />
-          <Button label="Submit" @click="loginUser" class="login-page-form-button" :disabled="submitButtonVisible" />
+          <Button label="Login" @click="loginUser" class="login-page-form-button" :disabled="submitButtonVisible" />
         </template>
       </div>
 
       <div v-else>
         <template>
-          <Dialog :visible.sync="confirmCodePlace" header="Onay Kodu" :style="{ width: '300px' }">
+          <Dialog :visible.sync="confirmCodePlace" header="Confirm Code" :style="{ width: '300px' }">
             <div class="login-page-form-confirmation">
               <InputText autofocus v-model="confirmCode" type="text" class="login-page-form-input" maxlength="6"
                 minlength="6" />
